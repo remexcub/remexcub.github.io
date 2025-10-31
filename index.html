@@ -1,29 +1,10 @@
 <!DOCTYPE html>
-<html lang="es-MX">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <title>REMEXCUB - Remesas a Cuba, MLC, CUP, Enviar Dinero a Cuba Desde México</title>
-    
-    <meta name="description" content="Remesas a Cuba, MLC, CUP, envíos de dinero a Cuba. Creados desde 2019 para ser el puente entre tú y tus amistades o familiares en CUBA">
-    <meta name="author" content="REMEXCUB">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://remexcub.com/">
-    <meta property="og:title" content="REMEXCUB">
-    <meta property="og:description" content="Remesas a Cuba, MLC, CUP, envíos de dinero a Cuba. Creados desde 2019 para ser el puente entre tú y tus amistades o familiares en CUBA">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
-    
+    <title>REMEXCUB - Remesas a Cuba desde México</title>
+    <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 5 años de confianza.">
     <style>
         * {
             margin: 0;
@@ -32,242 +13,204 @@
         }
 
         body {
-            font-family: 'Roboto', Arial, sans-serif;
-            background-color: #161616;
-            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            color: #333;
         }
 
-        /* Banner superior */
-        .top-banner {
-            background-color: #0707e5;
-            padding: 8px 20px;
+        header {
+            background: linear-gradient(135deg, #1877f2 0%, #42a5f5 100%);
+            color: white;
+            padding: 2rem 1rem;
             text-align: center;
-            font-size: 14px;
-            font-weight: 600;
         }
 
-        /* Header con imagen de fondo */
-        .hero {
-            background: linear-gradient(rgba(22, 22, 22, 0.25), rgba(22, 22, 22, 0.25)), 
-                        url('https://img1.wsimg.com/isteam/ip/c9509308-cfc9-423f-b9a2-b76295f71f34/Editar%20imagen%20actual.png') center/cover no-repeat;
-            min-height: 400px;
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #1e40af;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            list-style: none;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 60px 20px;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #fbbf24;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 2rem 1rem;
         }
 
-        .section {
-            background-color: #ffffff;
-            color: #333;
-            margin: 20px 0;
-            padding: 40px 20px;
-            border-radius: 8px;
+        section {
+            margin-bottom: 3rem;
         }
 
-        .section-alt {
-            background-color: #f6f6f6;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Montserrat', sans-serif;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            text-align: center;
-        }
-
-        h2 {
-            font-size: 2rem;
-            text-align: center;
-            color: #1e40af;
-        }
-
-        /* Botón de WhatsApp flotante */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #25d366;
-            color: white;
-            border-radius: 50px;
-            padding: 15px 20px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
+        .cta-buttons {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.3s ease;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
         }
 
-        .whatsapp-float:hover {
-            transform: translateY(-5px);
-            background-color: #128c7e;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #161616;
-            padding: 40px 20px;
-            text-align: center;
-            color: #a9a9a9;
-        }
-
-        footer a {
-            color: #6e6eff;
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 25px;
             text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            display: inline-block;
         }
 
-        footer a:hover {
-            color: #b9b9fe;
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
         }
 
-        .social-links {
-            margin: 20px 0;
+        .btn-calculator {
+            background: #1e40af;
+            color: white;
         }
 
-        .social-links svg {
-            width: 40px;
-            height: 40px;
-            fill: #f7f7f7;
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        footer {
+            background: #1e293b;
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
+            header h1 {
+                font-size: 2rem;
             }
-            
-            h2 {
-                font-size: 1.5rem;
+
+            nav ul {
+                gap: 1rem;
             }
-            
-            .container {
-                padding: 20px 15px;
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
             }
-            
-            .whatsapp-float {
-                bottom: 15px;
-                right: 15px;
-                padding: 12px 16px;
-                font-size: 14px;
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Banner Superior -->
-    <div class="top-banner">
-        "⚡ ENVÍO RÁPIDO A CUBA • MEJOR PRECIO • 100% SEGURO ⚡"
-    </div>
+    <header>
+        <h1>🇲🇽 REMEXCUB 🇨🇺</h1>
+        <p>Remesas a Cuba - Rápido, Seguro y Confiable</p>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div style="max-width: 800px; text-align: center;">
-            <img src="https://img1.wsimg.com/isteam/ip/c9509308-cfc9-423f-b9a2-b76295f71f34/Editar%20imagen%20actual.png" 
-                 alt="REMEXCUB Logo" 
-                 style="max-width: 400px; width: 100%; border-radius: 8px;">
-        </div>
-    </section>
+    <nav>
+        <ul>
+            <li><a href="#calculadora">💰 Calculadora</a></li>
+            <li><a href="#como-funciona">📋 Cómo Funciona</a></li>
+            <li><a href="#pagos">💳 Pagos</a></li>
+            <li><a href="#testimonios">⭐ Testimonios</a></li>
+            <li><a href="#faq">❓ FAQ</a></li>
+        </ul>
+    </nav>
 
-    <!-- FAQ Section -->
-    <section class="section">
-        <div class="container">
-            <iframe src="faq.html" 
-                    style="width: 100%; border: none; min-height: 800px;" 
-                    title="Preguntas Frecuentes"></iframe>
-        </div>
-    </section>
-
-    <!-- Calculadora Section -->
-    <section class="section section-alt">
-        <div class="container">
-            <iframe src="calculadora.html" 
-                    style="width: 100%; border: none; min-height: 750px;" 
-                    title="Calculadora de Remesas"></iframe>
-        </div>
-    </section>
-
-    <!-- Pagos Section -->
-    <section class="section">
-        <div class="container">
-            <iframe src="pagos.html" 
-                    style="width: 100%; border: none; min-height: 400px;" 
-                    title="Métodos de Pago"></iframe>
-        </div>
-    </section>
-
-    <!-- Testimonios Section -->
-    <section class="section section-alt">
-        <div class="container">
-            <iframe src="testimonios.html" 
-                    style="width: 100%; border: none; min-height: 500px;" 
-                    title="Testimonios"></iframe>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="social-links">
-            <a href="https://www.facebook.com/Remexcub" target="_blank" rel="noopener" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" width="40" height="40">
-                    <path d="M22 12.061C22 6.505 17.523 2 12 2S2 6.505 2 12.061c0 5.022 3.657 9.184 8.438 9.939v-7.03h-2.54v-2.91h2.54V9.845c0-2.522 1.492-3.915 3.777-3.915 1.094 0 2.238.197 2.238.197v2.476h-1.26c-1.243 0-1.63.775-1.63 1.57v1.888h2.773l-.443 2.908h-2.33V22c4.78-.755 8.437-4.917 8.437-9.939z"/>
-                </svg>
-            </a>
-        </div>
-        
-        <p style="margin: 15px 0;">
-            Copyright © 2024 REMEXCUB © - Todos los derechos reservados.
-        </p>
-        
-        <hr style="border: none; border-top: 1px solid #2a2a2a; margin: 20px auto; max-width: 50px;">
-        
-        <p style="font-size: 14px; color: #a9a9a9;">
-            Hecho con Amor por REMEXCUB ©
-        </p>
-    </footer>
-
-    <!-- WhatsApp Flotante -->
-    <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
-       class="whatsapp-float" 
-       target="_blank" 
-       rel="noopener">
-        📱 WhatsApp
-    </a>
-
-    <!-- Cookie Banner -->
-    <div id="cookie-banner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 999;">
-        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <p style="color: #333; margin: 0; flex: 1;">
-                <strong>Este sitio web utiliza cookies.</strong><br>
-                Usamos cookies para analizar el tráfico del sitio web y optimizar tu experiencia en el sitio.
+    <div class="container">
+        <section id="intro">
+            <h2 style="text-align: center; color: #1e40af; margin-bottom: 1rem;">
+                Envía dinero a tus familiares en Cuba
+            </h2>
+            <p style="text-align: center; font-size: 1.1rem; max-width: 800px; margin: 0 auto 2rem;">
+                Con más de 5 años de experiencia, somos tu puente confiable para enviar remesas en MLC, CUP y USD a Cuba. Servicio garantizado y respaldo del 100%.
             </p>
-            <button onclick="acceptCookies()" style="background: #0707e5; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer;">
-                Aceptar
-            </button>
-        </div>
+            
+            <div class="cta-buttons">
+                <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
+                   class="btn btn-whatsapp" target="_blank">
+                    📱 Contactar por WhatsApp
+                </a>
+                <a href="#calculadora" class="btn btn-calculator">
+                    🧮 Calcular mi remesa
+                </a>
+            </div>
+        </section>
+
+        <section id="calculadora">
+            <iframe src="Calculadora.html" 
+                    width="100%" 
+                    height="800" 
+                    frameborder="0"
+                    style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            </iframe>
+        </section>
+
+        <section id="pagos">
+            <iframe src="pagos.html" 
+                    width="100%" 
+                    height="400" 
+                    frameborder="0"
+                    style="border-radius: 12px;">
+            </iframe>
+        </section>
+
+        <section id="testimonios">
+            <iframe src="testimonios.html" 
+                    width="100%" 
+                    height="500" 
+                    frameborder="0"
+                    style="border-radius: 12px;">
+            </iframe>
+        </section>
+
+        <section id="faq">
+            <iframe src="preguntas-frecuentes.html" 
+                    width="100%" 
+                    height="1000" 
+                    frameborder="0"
+                    style="border-radius: 12px;">
+            </iframe>
+        </section>
     </div>
 
-    <script>
-        // Mostrar banner de cookies si no se ha aceptado
-        if (!localStorage.getItem('cookies-accepted')) {
-            document.getElementById('cookie-banner').style.display = 'block';
-        }
-
-        function acceptCookies() {
-            localStorage.setItem('cookies-accepted', 'true');
-            document.getElementById('cookie-banner').style.display = 'none';
-        }
-    </script>
+    <footer>
+        <p>&copy; 2025 REMEXCUB - Remesas a Cuba desde México</p>
+        <p>📱 WhatsApp: <a href="https://wa.me/528143005468" style="color: #25d366;">+52 814 300 5468</a></p>
+        <p>📘 Facebook: <a href="https://www.facebook.com/Remexcub" style="color: #1877f2;">@Remexcub</a></p>
+    </footer>
 </body>
 </html>
