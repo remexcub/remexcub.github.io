@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora México-Cuba</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #3494E6, #EC6EAD);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        .calculator {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            padding: 25px;
+            width: 100%;
+            max-width: 380px;
+            margin: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #37474f;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9em;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        #result {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #1a1a1a;
+            font-size: 1.3em;
+            background-color: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #4caf50;
+            transition: all 0.3s ease;
+        }
+
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #f44336;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .info {
+            color: #ff6b00;
+            text-align: left;
+            margin-top: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+            background-color: #fff3e0;
+            padding: 8px;
+            border-radius: 6px;
+            white-space: pre-line;
+        }
+
+        .service-info {
+            margin-top: 15px;
+            background-color: #e6f3ff;
+            color: #0066cc;
+            text-align: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .rate-info {
+            background-color: #e0f7fa;
+            color: #00796b;
+            text-align: left;
+            margin-top: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 6px;
+            white-space: pre-line;
+        }
+
+        .discount-info {
+            background-color: #fff3e0;
+            color: #e65100;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ff9800;
+            transition: all 0.4s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .rate-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 4px;
+        }
+
+        .info-button {
+            background: #FF5722;
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media screen and (max-width: 400px) {
+            body {
+                padding: 10px;
+                padding-top: 15px;
+            }
+            
+            .calculator {
+                width: 95%;
+                padding: 20px;
+                margin: 0;
+                max-width: none;
+            }
+
+            h1 {
+                font-size: 1.3em;
+                margin-bottom: 12px;
+            }
+
+            .input-group {
+                margin-bottom: 10px;
+            }
+
+            #result {
+                font-size: 1.2em;
+                padding: 12px;
+            }
+
+            .discount-info {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+
+            label, select, input, .error, .info, .service-info, .rate-info {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Calculadora México-Cuba</h1>
+        
+        <div class="input-group">
+            <label>Tipo de Conversión</label>
+            <select id="conversionType">
+                <option value="mxn_to_cup">MXN a CUP</option>
+                <option value="mxn_to_mlc">MXN a MLC</option>
+                <option value="mxn_to_usd">MXN a USD</option>
+                <option value="cup_to_mxn">CUP a MXN</option>
+                <option value="mlc_to_mxn">MLC a MXN</option>
+                <option value="usd_to_mxn">USD a MXN</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label id="inputLabel">Monto en Pesos Mexicanos (MXN)</label>
+            <input type="number" id="inputAmount" placeholder="Ingrese el monto" inputmode="numeric">
+        </div>
+
+        <div id="result"></div>
+        <div id="discountInfo" class="discount-info" style="display: none;"></div>
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="info" class="info">⚠️ IMPORTANTE: 
+Manejamos un mínimo de:
+<div style="display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0;">
+    <span class="info-button">MLC/CUP: 500 MXN 💰</span>
+    <span class="info-button" style="background: #795548;">USD: 50 USD 💳</span>
+    <span class="info-button" style="background: #607D8B;">EE.UU: 100 USD</span>
+</div></div>
+        
+        <div class="rate-info">
+            🔄 Tasas de Cambio Vigentes 
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
+                <span id="cupRateBtn" class="rate-button">CUP: 24.05</span>
+                <span id="mlcRateBtn" class="rate-button" style="background: #2196F3;">MLC: 8.60</span>
+                <span id="usdRateBtn" class="rate-button" style="background: #FF9800;">USD: 20.40</span>
+            </div>
+            <div id="discountButton" class="rate-button" style="background: #9C27B0; width: 100%; margin-top: 5px; font-size: 0.85em;">Descuentos: +3001 MXN = 25.05 CUP | +400 MLC = 8.15 MXN</div>
+        </div>
+        
+        <div class="service-info">
+            🌟 Servicio Garantizado: Rápido • Seguro • Confiable • Excelencia en Cada Transacción
+        </div>
+    </div>
+
+    <script>
+        const EXCHANGE_RATES = {
+            CUP_NORMAL: 24.05,
+            CUP_DISCOUNT: 25.05,
+            MLC_NORMAL: 8.60,
+            MLC_DISCOUNT: 8.15,
+            USD_NORMAL: 20.40,
+            CUP_DISCOUNT_FROM: 3001,
+            MLC_DISCOUNT_FROM: 400
+        };
+
+        let RATES = {};
+        let MINIMUMS = {};
+
+        function calculateDerivedRates() {
+            RATES = {
+                MXN_TO_CUP: EXCHANGE_RATES.CUP_NORMAL,
+                MXN_TO_MLC: 1 / EXCHANGE_RATES.MLC_NORMAL,
+                MXN_TO_USD: 1 / EXCHANGE_RATES.USD_NORMAL,
+                CUP_TO_MXN: 1 / EXCHANGE_RATES.CUP_NORMAL,
+                MLC_TO_MXN: EXCHANGE_RATES.MLC_NORMAL,
+                USD_TO_MXN: EXCHANGE_RATES.USD_NORMAL,
+                MXN_TO_CUP_DISCOUNT: EXCHANGE_RATES.CUP_DISCOUNT,
+                MXN_TO_MLC_DISCOUNT: 1 / EXCHANGE_RATES.MLC_DISCOUNT,
+                CUP_TO_MXN_DISCOUNT: 1 / EXCHANGE_RATES.CUP_DISCOUNT,
+                MLC_TO_MXN_DISCOUNT: EXCHANGE_RATES.MLC_DISCOUNT
+            };
+
+            MINIMUMS = {
+                MXN_TO_CUP: 500,
+                MXN_TO_MLC: 500,
+                MXN_TO_USD: 50 * EXCHANGE_RATES.USD_NORMAL,
+                CUP_TO_MXN: 500,
+                MLC_TO_MXN: 500,
+                USD_TO_MXN: 50 * EXCHANGE_RATES.USD_NORMAL
+            };
+        }
+
+        const conversionType = document.getElementById('conversionType');
+        const inputLabel = document.getElementById('inputLabel');
+        const inputAmount = document.getElementById('inputAmount');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+        const discountInfoDiv = document.getElementById('discountInfo');
+
+        conversionType.addEventListener('change', updateLabel);
+        inputAmount.addEventListener('input', convertCurrency);
+
+        function updateLabel() {
+            const type = conversionType.value;
+            const labels = {
+                'mxn_to_cup': 'Monto en Pesos Mexicanos (MXN)',
+                'mxn_to_mlc': 'Monto en Pesos Mexicanos (MXN)',
+                'mxn_to_usd': 'Monto en Pesos Mexicanos (MXN)',
+                'cup_to_mxn': 'Monto en Pesos Cubanos (CUP)',
+                'mlc_to_mxn': 'Monto en MLC',
+                'usd_to_mxn': 'Monto en USD'
+            };
+            inputLabel.textContent = labels[type];
+            convertCurrency();
+        }
+
+        function convertCurrency() {
+            const type = conversionType.value;
+            const amount = parseFloat(inputAmount.value);
+            
+            resultDiv.textContent = '';
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+            discountInfoDiv.style.display = 'none';
+
+            if (isNaN(amount) || amount <= 0) {
+                return;
+            }
+
+            let convertedAmount, resultText, hasDiscount = false, discountText = '';
+
+            switch(type) {
+                case 'mxn_to_cup':
+                    if (amount < MINIMUMS.MXN_TO_CUP) {
+                        errorDiv.textContent = `El monto mínimo de envío es de ${MINIMUMS.MXN_TO_CUP} MXN`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    if (amount >= EXCHANGE_RATES.CUP_DISCOUNT_FROM) {
+                        convertedAmount = amount * RATES.MXN_TO_CUP_DISCOUNT;
+                        hasDiscount = true;
+                        const normalAmount = amount * RATES.MXN_TO_CUP;
+                        const savings = convertedAmount - normalAmount;
+                        discountText = `🎉😊 ¡Descuento aplicado! Recibes ${savings.toFixed(2)} CUP adicionales 🎊`;
+                    } else {
+                        convertedAmount = amount * RATES.MXN_TO_CUP;
+                    }
+                    resultText = `${amount} MXN = ${convertedAmount.toFixed(2)} CUP`;
+                    break;
+
+                case 'mxn_to_mlc':
+                    if (amount < MINIMUMS.MXN_TO_MLC) {
+                        errorDiv.textContent = `El monto mínimo de envío es de ${MINIMUMS.MXN_TO_MLC} MXN`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    convertedAmount = amount * RATES.MXN_TO_MLC;
+                    resultText = `${amount} MXN = ${convertedAmount.toFixed(2)} MLC`;
+                    break;
+
+                case 'mxn_to_usd':
+                    if (amount < MINIMUMS.MXN_TO_USD) {
+                        errorDiv.textContent = `El monto mínimo de envío es de ${(MINIMUMS.MXN_TO_USD).toFixed(2)} MXN (50 USD)`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    convertedAmount = amount * RATES.MXN_TO_USD;
+                    resultText = `${amount} MXN = ${convertedAmount.toFixed(2)} USD`;
+                    break;
+
+                case 'cup_to_mxn':
+                    convertedAmount = amount * RATES.CUP_TO_MXN;
+                    if (convertedAmount < MINIMUMS.CUP_TO_MXN) {
+                        errorDiv.textContent = `El monto convertido debe ser al menos ${MINIMUMS.CUP_TO_MXN} MXN`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    resultText = `${amount} CUP = ${convertedAmount.toFixed(2)} MXN`;
+                    break;
+
+                case 'mlc_to_mxn':
+                    if (amount >= EXCHANGE_RATES.MLC_DISCOUNT_FROM) {
+                        convertedAmount = amount * RATES.MLC_TO_MXN_DISCOUNT;
+                        hasDiscount = true;
+                        const normalAmount = amount * RATES.MLC_TO_MXN;
+                        const savings = normalAmount - convertedAmount;
+                        discountText = `🎉😊 ¡Descuento aplicado! Pagas ${savings.toFixed(2)} MXN menos 🎊`;
+                    } else {
+                        convertedAmount = amount * RATES.MLC_TO_MXN;
+                    }
+                    if (convertedAmount < MINIMUMS.MLC_TO_MXN) {
+                        errorDiv.textContent = `El monto convertido debe ser al menos ${MINIMUMS.MLC_TO_MXN} MXN`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    resultText = `${amount} MLC = ${convertedAmount.toFixed(2)} MXN`;
+                    break;
+
+                case 'usd_to_mxn':
+                    convertedAmount = amount * RATES.USD_TO_MXN;
+                    if (convertedAmount < MINIMUMS.USD_TO_MXN) {
+                        errorDiv.textContent = `El monto convertido debe ser al menos ${(MINIMUMS.USD_TO_MXN).toFixed(2)} MXN (50 USD)`;
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    resultText = `${amount} USD = ${convertedAmount.toFixed(2)} MXN`;
+                    break;
+            }
+
+            resultDiv.textContent = resultText;
+            
+            if (hasDiscount) {
+                discountInfoDiv.textContent = discountText;
+                discountInfoDiv.style.display = 'block';
+            }
+        }
+
+        calculateDerivedRates();
+        updateLabel();
+    </script>
+</body>
+</html>
