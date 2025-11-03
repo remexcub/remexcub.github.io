@@ -159,6 +159,13 @@
             margin: 2px;
         }
 
+        .loading {
+            text-align: center;
+            color: #666;
+            font-size: 0.8em;
+            margin: 10px 0;
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -232,6 +239,7 @@
         <div id="result"></div>
         <div id="discountInfo" class="discount-info" style="display: none;"></div>
         <div id="error" class="error" style="display: none;"></div>
+        <div id="loadingStatus" class="loading" style="display: none;">⏳ Cargando tasas actualizadas...</div>
         
         <div id="info" class="info">⚠️ IMPORTANTE: 
 Manejamos un mínimo de:
@@ -244,11 +252,11 @@ Manejamos un mínimo de:
         <div class="rate-info">
             🔄 Tasas de Cambio Vigentes 
             <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
-                <span id="cupRateBtn" class="rate-button">CUP: 24.05</span>
-                <span id="mlcRateBtn" class="rate-button" style="background: #2196F3;">MLC: 8.60</span>
-                <span id="usdRateBtn" class="rate-button" style="background: #FF9800;">USD: 20.40</span>
+                <span id="cupRateBtn" class="rate-button">CUP: ...</span>
+                <span id="mlcRateBtn" class="rate-button" style="background: #2196F3;">MLC: ...</span>
+                <span id="usdRateBtn" class="rate-button" style="background: #FF9800;">USD: ...</span>
             </div>
-            <div id="discountButton" class="rate-button" style="background: #9C27B0; width: 100%; margin-top: 5px; font-size: 0.85em;">Descuentos: +3001 MXN = 25.05 CUP | +400 MLC = 8.15 MXN</div>
+            <div id="discountButton" class="rate-button" style="background: #9C27B0; width: 100%; margin-top: 5px; font-size: 0.85em;">Cargando descuentos...</div>
         </div>
         
         <div class="service-info">
@@ -257,7 +265,12 @@ Manejamos un mínimo de:
     </div>
 
     <script>
-        const EXCHANGE_RATES = {
+        // ID de tu Google Sheet
+        const SHEET_ID = '1sDKFXvPq3vO_yHTQGbjrcQ76FFN59PiMJtwZ-ydaadM';
+        const RANGE = 'A1:B10'; // Rango que contiene tus datos
+        
+        // Tasas por defecto (se usarán si falla la carga desde Google Sheets)
+        let EXCHANGE_RATES = {
             CUP_NORMAL: 24.05,
             CUP_DISCOUNT: 25.05,
             MLC_NORMAL: 8.60,
@@ -269,6 +282,75 @@ Manejamos un mínimo de:
 
         let RATES = {};
         let MINIMUMS = {};
+
+        // Función para cargar tasas desde Google Sheets
+        async function loadRatesFromGoogleSheets() {
+            try {
+                const loadingDiv = document.getElementById('loadingStatus');
+                loadingDiv.style.display = 'block';
+                
+                // URL para obtener los datos en formato CSV
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+                
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                // Parsear el CSV
+                const lines = text.split('\n');
+                const data = {};
+                
+                // Leer las líneas (empezando desde la línea 3 que es donde están tus datos)
+                for (let i = 2; i < lines.length; i++) {
+                    const columns = lines[i].split(',');
+                    if (columns.length >= 2 && columns[0]) {
+                        const key = columns[0].trim();
+                        const value = parseFloat(columns[1].trim());
+                        if (!isNaN(value)) {
+                            data[key] = value;
+                        }
+                    }
+                }
+                
+                // Actualizar las tasas si tenemos datos válidos
+                if (data.CUP_NORMAL) {
+                    EXCHANGE_RATES.CUP_NORMAL = data.CUP_NORMAL;
+                }
+                if (data.CUP_DISCOUNT) {
+                    EXCHANGE_RATES.CUP_DISCOUNT = data.CUP_DISCOUNT;
+                }
+                if (data.MLC_NORMAL) {
+                    EXCHANGE_RATES.MLC_NORMAL = data.MLC_NORMAL;
+                }
+                if (data.MLC_DISCOUNT) {
+                    EXCHANGE_RATES.MLC_DISCOUNT = data.MLC_DISCOUNT;
+                }
+                if (data.USD_NORMAL) {
+                    EXCHANGE_RATES.USD_NORMAL = data.USD_NORMAL;
+                }
+                if (data.CUP_DISCOUNT_FROM) {
+                    EXCHANGE_RATES.CUP_DISCOUNT_FROM = data.CUP_DISCOUNT_FROM;
+                }
+                if (data.MLC_DISCOUNT_FROM) {
+                    EXCHANGE_RATES.MLC_DISCOUNT_FROM = data.MLC_DISCOUNT_FROM;
+                }
+                
+                // Recalcular las tasas derivadas
+                calculateDerivedRates();
+                
+                // Actualizar la UI con las nuevas tasas
+                updateRateDisplay();
+                
+                loadingDiv.style.display = 'none';
+                console.log('✅ Tasas cargadas exitosamente desde Google Sheets');
+                
+            } catch (error) {
+                console.error('❌ Error al cargar tasas desde Google Sheets:', error);
+                document.getElementById('loadingStatus').style.display = 'none';
+                // Usar tasas por defecto
+                calculateDerivedRates();
+                updateRateDisplay();
+            }
+        }
 
         function calculateDerivedRates() {
             RATES = {
@@ -292,6 +374,18 @@ Manejamos un mínimo de:
                 MLC_TO_MXN: 500,
                 USD_TO_MXN: 50 * EXCHANGE_RATES.USD_NORMAL
             };
+        }
+
+        function updateRateDisplay() {
+            // Actualizar los botones con las tasas actuales
+            document.getElementById('cupRateBtn').textContent = `CUP: ${EXCHANGE_RATES.CUP_NORMAL.toFixed(2)}`;
+            document.getElementById('mlcRateBtn').textContent = `MLC: ${EXCHANGE_RATES.MLC_NORMAL.toFixed(2)}`;
+            document.getElementById('usdRateBtn').textContent = `USD: ${EXCHANGE_RATES.USD_NORMAL.toFixed(2)}`;
+            document.getElementById('discountButton').textContent = 
+                `Descuentos: +${EXCHANGE_RATES.CUP_DISCOUNT_FROM} MXN = ${EXCHANGE_RATES.CUP_DISCOUNT.toFixed(2)} CUP | +${EXCHANGE_RATES.MLC_DISCOUNT_FROM} MLC = ${EXCHANGE_RATES.MLC_DISCOUNT.toFixed(2)} MXN`;
+            
+            // Recalcular si hay un monto ingresado
+            convertCurrency();
         }
 
         const conversionType = document.getElementById('conversionType');
@@ -419,8 +513,18 @@ Manejamos un mínimo de:
             }
         }
 
-        calculateDerivedRates();
-        updateLabel();
+        // Inicializar la calculadora
+        async function init() {
+            // Cargar tasas desde Google Sheets
+            await loadRatesFromGoogleSheets();
+            updateLabel();
+            
+            // Recargar las tasas cada 5 minutos
+            setInterval(loadRatesFromGoogleSheets, 5 * 60 * 1000);
+        }
+
+        // Ejecutar cuando la página cargue
+        init();
     </script>
 </body>
 </html>
