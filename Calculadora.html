@@ -271,13 +271,13 @@ Manejamos un mínimo de:
         
         // Tasas por defecto (se usarán si falla la carga desde Google Sheets)
         let EXCHANGE_RATES = {
-            CUP_NORMAL: 24.05,
-            CUP_DISCOUNT: 25.05,
-            MLC_NORMAL: 8.60,
-            MLC_DISCOUNT: 8.15,
-            USD_NORMAL: 20.40,
+            CUP_NORMAL: 21.20,
+            CUP_DISCOUNT: 21.95,
+            MLC_NORMAL: 9.45,
+            USD_NORMAL: 20.35,
+            USD_DISCOUNT: 19.64,
             CUP_DISCOUNT_FROM: 3001,
-            MLC_DISCOUNT_FROM: 400
+            USD_DISCOUNT_FROM: 500
         };
 
         let RATES = {};
@@ -321,17 +321,17 @@ Manejamos un mínimo de:
                 if (data.MLC_NORMAL) {
                     EXCHANGE_RATES.MLC_NORMAL = data.MLC_NORMAL;
                 }
-                if (data.MLC_DISCOUNT) {
-                    EXCHANGE_RATES.MLC_DISCOUNT = data.MLC_DISCOUNT;
-                }
                 if (data.USD_NORMAL) {
                     EXCHANGE_RATES.USD_NORMAL = data.USD_NORMAL;
+                }
+                if (data.USD_DISCOUNT) {
+                    EXCHANGE_RATES.USD_DISCOUNT = data.USD_DISCOUNT;
                 }
                 if (data.CUP_DISCOUNT_FROM) {
                     EXCHANGE_RATES.CUP_DISCOUNT_FROM = data.CUP_DISCOUNT_FROM;
                 }
-                if (data.MLC_DISCOUNT_FROM) {
-                    EXCHANGE_RATES.MLC_DISCOUNT_FROM = data.MLC_DISCOUNT_FROM;
+                if (data.USD_DISCOUNT_FROM) {
+                    EXCHANGE_RATES.USD_DISCOUNT_FROM = data.USD_DISCOUNT_FROM;
                 }
                 
                 // Recalcular las tasas derivadas
@@ -361,9 +361,9 @@ Manejamos un mínimo de:
                 MLC_TO_MXN: EXCHANGE_RATES.MLC_NORMAL,
                 USD_TO_MXN: EXCHANGE_RATES.USD_NORMAL,
                 MXN_TO_CUP_DISCOUNT: EXCHANGE_RATES.CUP_DISCOUNT,
-                MXN_TO_MLC_DISCOUNT: 1 / EXCHANGE_RATES.MLC_DISCOUNT,
+                MXN_TO_USD_DISCOUNT: 1 / EXCHANGE_RATES.USD_DISCOUNT,
                 CUP_TO_MXN_DISCOUNT: 1 / EXCHANGE_RATES.CUP_DISCOUNT,
-                MLC_TO_MXN_DISCOUNT: EXCHANGE_RATES.MLC_DISCOUNT
+                USD_TO_MXN_DISCOUNT: EXCHANGE_RATES.USD_DISCOUNT
             };
 
             MINIMUMS = {
@@ -382,7 +382,7 @@ Manejamos un mínimo de:
             document.getElementById('mlcRateBtn').textContent = `MLC: ${EXCHANGE_RATES.MLC_NORMAL.toFixed(2)}`;
             document.getElementById('usdRateBtn').textContent = `USD: ${EXCHANGE_RATES.USD_NORMAL.toFixed(2)}`;
             document.getElementById('discountButton').textContent = 
-                `Descuentos: +${EXCHANGE_RATES.CUP_DISCOUNT_FROM} MXN = ${EXCHANGE_RATES.CUP_DISCOUNT.toFixed(2)} CUP | +${EXCHANGE_RATES.MLC_DISCOUNT_FROM} MLC = ${EXCHANGE_RATES.MLC_DISCOUNT.toFixed(2)} MXN`;
+                `Descuentos: +${EXCHANGE_RATES.CUP_DISCOUNT_FROM} MXN = ${EXCHANGE_RATES.CUP_DISCOUNT.toFixed(2)} CUP | +${EXCHANGE_RATES.USD_DISCOUNT_FROM} USD = ${EXCHANGE_RATES.USD_DISCOUNT.toFixed(2)} MXN`;
             
             // Recalcular si hay un monto ingresado
             convertCurrency();
@@ -477,15 +477,7 @@ Manejamos un mínimo de:
                     break;
 
                 case 'mlc_to_mxn':
-                    if (amount >= EXCHANGE_RATES.MLC_DISCOUNT_FROM) {
-                        convertedAmount = amount * RATES.MLC_TO_MXN_DISCOUNT;
-                        hasDiscount = true;
-                        const normalAmount = amount * RATES.MLC_TO_MXN;
-                        const savings = normalAmount - convertedAmount;
-                        discountText = `🎉😊 ¡Descuento aplicado! Pagas ${savings.toFixed(2)} MXN menos 🎊`;
-                    } else {
-                        convertedAmount = amount * RATES.MLC_TO_MXN;
-                    }
+                    convertedAmount = amount * RATES.MLC_TO_MXN;
                     if (convertedAmount < MINIMUMS.MLC_TO_MXN) {
                         errorDiv.textContent = `El monto convertido debe ser al menos ${MINIMUMS.MLC_TO_MXN} MXN`;
                         errorDiv.style.display = 'block';
@@ -495,7 +487,17 @@ Manejamos un mínimo de:
                     break;
 
                 case 'usd_to_mxn':
-                    convertedAmount = amount * RATES.USD_TO_MXN;
+                    // Aplicar descuento si el monto es >= 500 USD
+                    if (amount >= EXCHANGE_RATES.USD_DISCOUNT_FROM) {
+                        convertedAmount = amount * RATES.USD_TO_MXN_DISCOUNT;
+                        hasDiscount = true;
+                        const normalAmount = amount * RATES.USD_TO_MXN;
+                        const savings = normalAmount - convertedAmount;
+                        discountText = `🎉😊 ¡Descuento aplicado! Pagas ${savings.toFixed(2)} MXN menos 🎊`;
+                    } else {
+                        convertedAmount = amount * RATES.USD_TO_MXN;
+                    }
+                    
                     if (convertedAmount < MINIMUMS.USD_TO_MXN) {
                         errorDiv.textContent = `El monto convertido debe ser al menos ${(MINIMUMS.USD_TO_MXN).toFixed(2)} MXN (50 USD)`;
                         errorDiv.style.display = 'block';
