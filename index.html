@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMEXCUB - Remesas a Cuba desde México</title>
     <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 5 años de confianza.">
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '875640734711452');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=875640734711452&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    
     <style>
         * {
             margin: 0;
@@ -161,10 +180,14 @@
             
             <div class="cta-buttons">
                 <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
-                   class="btn btn-whatsapp" target="_blank">
+                   class="btn btn-whatsapp" 
+                   target="_blank"
+                   id="whatsappButton">
                     📱 Contactar por WhatsApp
                 </a>
-                <a href="#calculadora" class="btn btn-calculator">
+                <a href="#calculadora" 
+                   class="btn btn-calculator"
+                   id="calculatorButton">
                     🧮 Calcular mi remesa
                 </a>
             </div>
@@ -212,5 +235,51 @@
         <p>📱 WhatsApp: <a href="https://wa.me/528143005468" style="color: #25d366;">+52 814 300 5468</a></p>
         <p>📘 Facebook: <a href="https://www.facebook.com/Remexcub" style="color: #1877f2;">@Remexcub</a></p>
     </footer>
+
+    <script>
+        // Rastrear click en botón de WhatsApp
+        document.getElementById('whatsappButton').addEventListener('click', function() {
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Contact', {
+                    content_name: 'Click WhatsApp desde página principal',
+                    content_category: 'Contacto directo'
+                });
+                console.log('✅ Evento Contact enviado a Facebook');
+            }
+        });
+
+        // Rastrear click en botón de Calculadora
+        document.getElementById('calculatorButton').addEventListener('click', function() {
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'ViewContent', {
+                    content_name: 'Acceso a calculadora',
+                    content_category: 'Interés en cotización'
+                });
+                console.log('✅ Evento ViewContent enviado a Facebook');
+            }
+        });
+
+        // Rastrear scroll a sección de calculadora
+        const calculadoraSection = document.getElementById('calculadora');
+        let calculadoraViewed = false;
+
+        window.addEventListener('scroll', function() {
+            if (calculadoraViewed) return;
+            
+            const rect = calculadoraSection.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+            
+            if (isVisible) {
+                calculadoraViewed = true;
+                if (typeof fbq !== 'undefined') {
+                    fbq('trackCustom', 'CalculatoraVisible', {
+                        content_name: 'Usuario llegó a sección de calculadora',
+                        content_category: 'Engagement'
+                    });
+                    console.log('✅ Evento CalculatoraVisible enviado a Facebook');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
