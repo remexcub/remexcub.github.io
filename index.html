@@ -6,7 +6,7 @@
     <title>REMEXCUB - Remesas a Cuba desde México</title>
     <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 5 años de confianza.">
     
-    <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code - DUAL TRACKING -->
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -16,13 +16,25 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // Pixel Principal (nuevo)
+    fbq('init', '1528302551723454');
+    console.log('✅ Pixel Principal inicializado: 1528302551723454');
+    
+    // Pixel Secundario (anterior)
     fbq('init', '875640734711452');
+    console.log('✅ Pixel Secundario inicializado: 875640734711452');
+    
+    // PageView se envía a AMBOS pixels automáticamente
     fbq('track', 'PageView');
-    console.log('✅ Facebook Pixel inicializado - PageView enviado');
+    console.log('✅ PageView enviado a ambos pixels');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=875640734711452&ev=PageView&noscript=1"
-    /></noscript>
+    <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1528302551723454&ev=PageView&noscript=1"/>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=875640734711452&ev=PageView&noscript=1"/>
+    </noscript>
     <!-- End Meta Pixel Code -->
     
     <style>
@@ -1012,7 +1024,7 @@ Manejamos un mínimo de:
 
     <script>
         // ========================================
-        // FACEBOOK PIXEL EVENTS
+        // FACEBOOK PIXEL EVENTS - DUAL TRACKING
         // ========================================
         
         // Evento: Click en botón de WhatsApp (intro)
@@ -1022,7 +1034,7 @@ Manejamos un mínimo de:
                     content_name: 'Click WhatsApp desde página principal',
                     content_category: 'Contacto directo'
                 });
-                console.log('✅ Evento Contact enviado - WhatsApp intro');
+                console.log('✅ Evento Contact enviado a ambos pixels - WhatsApp intro');
             }
         });
 
@@ -1033,7 +1045,7 @@ Manejamos un mínimo de:
                     content_name: 'Click WhatsApp desde testimonios',
                     content_category: 'Contacto directo'
                 });
-                console.log('✅ Evento Contact enviado - WhatsApp testimonios');
+                console.log('✅ Evento Contact enviado a ambos pixels - WhatsApp testimonios');
             }
         });
 
@@ -1044,7 +1056,7 @@ Manejamos un mínimo de:
                     content_name: 'Acceso a calculadora',
                     content_category: 'Interés en cotización'
                 });
-                console.log('✅ Evento ViewContent enviado - Botón calculadora');
+                console.log('✅ Evento ViewContent enviado a ambos pixels - Botón calculadora');
             }
         });
 
@@ -1055,7 +1067,7 @@ Manejamos un mínimo de:
                     content_name: 'Click Mercado Pago',
                     content_category: 'Intención de pago'
                 });
-                console.log('✅ Evento InitiateCheckout enviado - Mercado Pago');
+                console.log('✅ Evento InitiateCheckout enviado a ambos pixels - Mercado Pago');
             }
         });
 
@@ -1066,7 +1078,7 @@ Manejamos un mínimo de:
                     content_name: 'Ver página de Facebook',
                     content_category: 'Social engagement'
                 });
-                console.log('✅ Evento FacebookPageView enviado');
+                console.log('✅ Evento FacebookPageView enviado a ambos pixels');
             }
         });
 
@@ -1083,11 +1095,11 @@ Manejamos un mínimo de:
             if (isVisible) {
                 calculadoraViewed = true;
                 if (typeof fbq !== 'undefined') {
-                    fbq('trackCustom', 'CalculatoraVisible', {
+                    fbq('trackCustom', 'CalculadoraVisible', {
                         content_name: 'Usuario llegó a sección de calculadora',
                         content_category: 'Engagement'
                     });
-                    console.log('✅ Evento CalculatoraVisible enviado');
+                    console.log('✅ Evento CalculadoraVisible enviado a ambos pixels');
                 }
             }
         });
@@ -1255,7 +1267,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización MXN a CUP',
                             content_category: hasDiscount ? 'Con descuento' : 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización MXN a CUP');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización MXN a CUP');
                     }
                     break;
 
@@ -1275,7 +1287,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización MXN a MLC',
                             content_category: 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización MXN a MLC');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización MXN a MLC');
                     }
                     break;
 
@@ -1295,7 +1307,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización MXN a USD',
                             content_category: 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización MXN a USD');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización MXN a USD');
                     }
                     break;
 
@@ -1315,7 +1327,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización CUP a MXN',
                             content_category: 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización CUP a MXN');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización CUP a MXN');
                     }
                     break;
 
@@ -1335,7 +1347,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización MLC a MXN',
                             content_category: 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización MLC a MXN');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización MLC a MXN');
                     }
                     break;
 
@@ -1364,7 +1376,7 @@ Manejamos un mínimo de:
                             content_name: 'Cotización USD a MXN',
                             content_category: hasDiscount ? 'Con descuento' : 'Normal'
                         });
-                        console.log('✅ Evento Lead enviado - Cotización USD a MXN');
+                        console.log('✅ Evento Lead enviado a ambos pixels - Cotización USD a MXN');
                     }
                     break;
             }
@@ -1382,7 +1394,7 @@ Manejamos un mínimo de:
                         content_name: 'Cliente con descuento calificado',
                         content_category: type
                     });
-                    console.log('✅ Evento InitiateCheckout enviado - Descuento aplicado');
+                    console.log('✅ Evento InitiateCheckout enviado a ambos pixels - Descuento aplicado');
                 }
             }
         }
