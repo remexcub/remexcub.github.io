@@ -565,6 +565,7 @@
             overflow: hidden;
             transition: all 0.3s ease;
             background: #f8fafc;
+            padding: 0 1.5rem; /* Mantener padding horizontal pero sin altura */
         }
 
         .faq-item.active .faq-answer {
@@ -755,14 +756,6 @@
                     <div id="error" class="error"></div>
                     <div id="loadingStatus" class="loading">⏳ Cargando tasas actualizadas...</div>
                     
-                    <div class="info">⚠️ IMPORTANTE: 
-Manejamos un mínimo de:
-<div style="display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0;">
-    <span class="info-button">MLC/CUP: 500 MXN 💰</span>
-    <span class="info-button" style="background: #795548;">USD: 50 USD 💳</span>
-    <span class="info-button" style="background: #607D8B;">EE.UU: 100 USD</span>
-</div></div>
-                    
                     <div class="rate-info">
                         🔄 Tasas de Cambio Vigentes 
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
@@ -771,10 +764,6 @@ Manejamos un mínimo de:
                             <span id="usdRateBtn" class="rate-button" style="background: #FF9800;">USD: ...</span>
                         </div>
                         <div id="discountButton" class="rate-button" style="background: #9C27B0; width: 100%; margin-top: 5px; font-size: 0.85em;">Cargando descuentos...</div>
-                    </div>
-                    
-                    <div class="service-info">
-                        🌟 Servicio Garantizado: Rápido • Seguro • Confiable • Excelencia en Cada Transacción
                     </div>
                 </div>
             </div>
@@ -1455,10 +1444,11 @@ Manejamos un mínimo de:
             });
         });
 
-        // Mostrar todas las preguntas por defecto
+        // Ocultar todas las FAQ por defecto - solo mostrar botones de categorías
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.faq-item').forEach(item => {
-                item.style.display = 'block';
+                item.style.display = 'none'; // OCULTAR TODAS por defecto
+                item.classList.remove('active'); // Remover cualquier clase active
             });
         });
 
