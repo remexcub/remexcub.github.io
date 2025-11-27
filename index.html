@@ -403,56 +403,6 @@
         .mastercard { background-color: #eb001b; }
         .discover { background-color: #ff6000; }
 
-        /* TESTIMONIOS */
-        .testimonials-section {
-            padding: 3rem 1rem;
-            background: linear-gradient(135deg, #1877f2 0%, #42a5f5 100%);
-            color: white;
-            text-align: center;
-            border-radius: 12px;
-        }
-
-        .testimonials-section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .testimonials-section p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .stat {
-            background: rgba(255,255,255,0.2);
-            padding: 1.5rem;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .btn-facebook {
-            background: white;
-            color: #1877f2;
-        }
-
         /* FAQ */
         .faq-section {
             max-width: 1000px;
@@ -565,7 +515,7 @@
             overflow: hidden;
             transition: all 0.3s ease;
             background: #f8fafc;
-            padding: 0 1.5rem; /* Mantener padding horizontal pero sin altura */
+            padding: 0 1.5rem;
         }
 
         .faq-item.active .faq-answer {
@@ -640,14 +590,6 @@
                 padding: 30px 20px;
             }
 
-            .testimonials-section h2 {
-                font-size: 1.6rem;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .faq-question {
                 padding: 1rem;
                 font-size: 1rem;
@@ -666,10 +608,6 @@
             .calculator {
                 padding: 15px;
             }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -683,7 +621,6 @@
         <ul>
             <li><a href="#calculadora">💰 Calculadora</a></li>
             <li><a href="#pagos">💳 Pagos</a></li>
-            <li><a href="#testimonios">⭐ Testimonios</a></li>
             <li><a href="#faq">❓ FAQ</a></li>
         </ul>
     </nav>
@@ -794,48 +731,6 @@
                         <div class="card-icon mastercard">MC</div>
                         <div class="card-icon discover">DISC</div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TESTIMONIOS -->
-        <section id="testimonios">
-            <div class="testimonials-section">
-                <h2>📘 Lo que dicen nuestros clientes</h2>
-                <p>Miles de familias confían en REMEXCUB para enviar dinero a Cuba</p>
-
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-number">2,136+</div>
-                        <div>Seguidores en Facebook</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">100%</div>
-                        <div>Recomendación</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">5+</div>
-                        <div>Años de confianza</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">⭐⭐⭐⭐⭐</div>
-                        <div>Calificación promedio</div>
-                    </div>
-                </div>
-
-                <div class="cta-buttons">
-                    <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
-                       class="btn btn-whatsapp"
-                       target="_blank"
-                       id="whatsappButton2">
-                        📱 WhatsApp
-                    </a>
-                    <a href="https://www.facebook.com/Remexcub" 
-                       class="btn btn-facebook"
-                       target="_blank"
-                       id="facebookButton">
-                        👀 Ver página de Facebook
-                    </a>
                 </div>
             </div>
         </section>
@@ -1044,17 +939,6 @@
             }
         });
 
-        // Evento: Click en botón de WhatsApp (testimonios)
-        document.getElementById('whatsappButton2').addEventListener('click', function() {
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'Contact', {
-                    content_name: 'Click WhatsApp desde testimonios',
-                    content_category: 'Contacto directo'
-                });
-                console.log('✅ Evento Contact enviado a ambos pixels - WhatsApp testimonios');
-            }
-        });
-
         // Evento: Click en botón de Calculadora
         document.getElementById('calculatorButton').addEventListener('click', function() {
             if (typeof fbq !== 'undefined') {
@@ -1074,17 +958,6 @@
                     content_category: 'Intención de pago'
                 });
                 console.log('✅ Evento InitiateCheckout enviado a ambos pixels - Mercado Pago');
-            }
-        });
-
-        // Evento: Click en botón de Facebook
-        document.getElementById('facebookButton').addEventListener('click', function() {
-            if (typeof fbq !== 'undefined') {
-                fbq('trackCustom', 'FacebookPageView', {
-                    content_name: 'Ver página de Facebook',
-                    content_category: 'Social engagement'
-                });
-                console.log('✅ Evento FacebookPageView enviado a ambos pixels');
             }
         });
 
@@ -1447,8 +1320,8 @@
         // Ocultar todas las FAQ por defecto - solo mostrar botones de categorías
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.faq-item').forEach(item => {
-                item.style.display = 'none'; // OCULTAR TODAS por defecto
-                item.classList.remove('active'); // Remover cualquier clase active
+                item.style.display = 'none';
+                item.classList.remove('active');
             });
         });
 
