@@ -1095,10 +1095,10 @@
         function calculateDerivedRates() {
             RATES = {
                 MXN_TO_CUP: EXCHANGE_RATES.CUP_NORMAL,
-                MXN_TO_MLC: EXCHANGE_RATES.MLC_NORMAL,
+                MXN_TO_MLC: 1 / EXCHANGE_RATES.MLC_NORMAL,
                 MXN_TO_USD: 1 / EXCHANGE_RATES.USD_NORMAL,
                 CUP_TO_MXN: 1 / EXCHANGE_RATES.CUP_NORMAL,
-                MLC_TO_MXN: 1 / EXCHANGE_RATES.MLC_NORMAL,
+                MLC_TO_MXN: EXCHANGE_RATES.MLC_NORMAL,
                 USD_TO_MXN: EXCHANGE_RATES.USD_NORMAL,
                 MXN_TO_CUP_DISCOUNT: EXCHANGE_RATES.CUP_DISCOUNT,
                 MXN_TO_USD_DISCOUNT: 1 / EXCHANGE_RATES.USD_DISCOUNT,
