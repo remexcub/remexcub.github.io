@@ -2,6 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10865830464"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10865830464');
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMEXCUB - Remesas a Cuba desde México</title>
     <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 6 años de confianza.">
@@ -1254,8 +1264,6 @@
             }
 
             resultDiv.textContent = resultText;
-            
-            // Mostrar el botón de WhatsApp después de cotizar
             document.getElementById('whatsappCTA').style.display = 'block';
             
             if (hasDiscount) {
@@ -1300,7 +1308,6 @@
             });
         });
 
-        // Ocultar todas las FAQ por defecto - solo mostrar botones de categorías
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.faq-item').forEach(item => {
                 item.style.display = 'none';
