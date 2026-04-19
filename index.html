@@ -12,6 +12,21 @@
       gtag('config', 'AW-10865830464');
     </script>
 
+    <!-- Event snippet for Compra conversion -->
+    <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') { window.location = url; }
+      };
+      gtag('event', 'conversion', {
+        'send_to': 'AW-10865830464/3bTcCLuPgp8cEMDUnb0o',
+        'transaction_id': '',
+        'event_callback': callback
+      });
+      return false;
+    }
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMEXCUB - Remesas a Cuba desde México</title>
     <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 6 años de confianza.">
@@ -751,7 +766,9 @@
             </p>
             
             <div class="cta-buttons">
-                <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
+                <!-- ✅ BOTÓN WHATSAPP CON CONVERSIÓN GOOGLE ADS -->
+                <a onclick="return gtag_report_conversion('https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba');"
+                   href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
                    class="btn btn-whatsapp" 
                    target="_blank">
                     📱 Contactar por WhatsApp
@@ -789,12 +806,13 @@
                     <div id="suspendedInfo" class="suspended"></div>
                     <div id="discountInfo" class="discount-info"></div>
                     
-                    <!-- BOTÓN WHATSAPP DESPUÉS DEL RESULTADO -->
+                    <!-- ✅ BOTÓN WHATSAPP CALCULADORA CON CONVERSIÓN GOOGLE ADS -->
                     <div id="whatsappCTA">
                         <p style="font-size: 1.1em; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
                             ⚡ ¿Listo para enviar?
                         </p>
-                        <a href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
+                        <a onclick="return gtag_report_conversion('https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba');"
+                           href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
                            target="_blank">
                             📱 ENVIAR AHORA
                         </a>
