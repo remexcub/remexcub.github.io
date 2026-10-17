@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10865830464"></script>
     <script>
@@ -12,10 +12,14 @@
       gtag('config', 'AW-10865830464');
     </script>
 
-    <!-- Event snippet for Compra conversion -->
+    <!-- Event snippet for Compra conversion
+         (se agregó un respaldo de 1 segundo: si el navegador bloquea gtag, el botón igual abre WhatsApp) -->
     <script>
     function gtag_report_conversion(url) {
+      var yaFue = false;
       var callback = function () {
+        if (yaFue) { return; }
+        yaFue = true;
         if (typeof(url) != 'undefined') { window.location = url; }
       };
       gtag('event', 'conversion', {
@@ -23,1327 +27,1054 @@
         'transaction_id': Date.now().toString(),
         'event_callback': callback
       });
+      setTimeout(callback, 1000);
       return false;
     }
     </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REMEXCUB - Remesas a Cuba desde México</title>
-    <meta name="description" content="Envía dinero a Cuba de forma rápida y segura. MLC, CUP y USD. Más de 6 años de confianza.">
-    
+    <meta name="description" content="Envía dinero a Cuba desde México: CUP, MLC y USD a tarjeta, y efectivo a domicilio. Operando desde 2019, con reembolso garantizado.">
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --tinta: #10204d;
+            --azul: #1c3faa;
+            --rojo: #d7262c;
+            --oro-suave: #fff1bf;
+            --oro-texto: #5c4300;
+            --papel: #f4f6fb;
+            --linea: #dbe1ee;
+            --suave: #56627f;
+            --wa: #12924a;
+            --wa-hover: #0e7a3d;
+            --display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+            --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* HERO BANNER CON IMAGEN */
-        .hero-banner {
-            position: relative;
-            width: 100%;
-            height: auto;
-            min-height: 300px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        .hero-banner img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            object-position: center;
-            display: block;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
-            padding: 2rem;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* NAVEGACIÓN */
-        nav {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
-
-        nav a:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-            color: #fbbf24;
-        }
-
-        /* CONTAINER GENERAL */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        section {
-            margin-bottom: 3rem;
-        }
-
-        /* INTRO */
-        #intro {
-            text-align: center;
-            padding: 3rem 1rem;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            animation: slideIn 0.8s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #intro h2 {
-            color: #1e40af;
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        #intro p {
-            font-size: 1.15rem;
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            color: #475569;
-            line-height: 1.8;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 1rem 2.5rem;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.4s ease;
-            display: inline-block;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            font-size: 1.05rem;
-        }
-
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #25d366 0%, #20bd5a 100%);
-            color: white;
-        }
-
-        .btn-calculator {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
-
-        .btn-whatsapp:hover {
-            background: linear-gradient(135deg, #20bd5a 0%, #1da851 100%);
-        }
-
-        .btn-calculator:hover {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
-
-        /* CALCULADORA */
-        .calculator-wrapper {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .calculator {
-            background-color: white;
-            border-radius: 16px;
-            padding: 20px 25px;
-            max-width: 420px;
-            margin: 0 auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-
-        .calculator h2 {
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            font-weight: 700;
-        }
-
-        .input-group {
-            margin-bottom: 12px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #37474f;
-            font-size: 0.95em;
-            font-weight: 600;
-        }
-
-        .input-group select,
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .input-group select:focus,
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        #result {
-            margin-top: 20px;
-            text-align: center;
-            font-weight: bold;
-            color: #1a1a1a;
-            font-size: 1.4em;
-            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-            padding: 18px;
-            border-radius: 12px;
-            border: 3px solid #4caf50;
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.02);
-            }
-        }
-
-        .error {
-            color: #d32f2f;
-            background-color: #ffebee;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #f44336;
-            display: none;
-        }
-
-        .suspended {
-            color: #d32f2f;
-            background-color: #fff3cd;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #ff9800;
-            display: none;
-        }
-
-        .discount-info {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            color: #e65100;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 1em;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ff9800;
-            display: none;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        .rate-button {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 25px;
-            font-size: 0.9em;
-            font-weight: bold;
-            margin: 4px;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .rate-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-        }
-
-        .info-button {
-            background: linear-gradient(135deg, #FF5722 0%, #f4511e 100%);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: bold;
-            margin: 2px;
-            display: inline-block;
-        }
-
-        .loading {
-            text-align: center;
-            color: #666;
-            font-size: 0.85em;
-            margin: 10px 0;
-            display: none;
-        }
-
-        .rate-info {
-            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-            color: #00796b;
-            text-align: left;
-            margin-top: 15px;
-            font-size: 0.85em;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.2);
-        }
-
-        /* WHATSAPP CTA */
-        #whatsappCTA {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        #whatsappCTA a {
-            display: inline-block;
-            background: linear-gradient(135deg, #25d366 0%, #20bd5a 100%);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 35px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-        }
-
-        #whatsappCTA a:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
-        }
-
-        /* PAGOS */
-        .payment-section {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .payment-subtitle {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .shield-icon {
-            width: 24px;
-            height: 24px;
-            fill: #28a745;
-        }
-
-        .minimum-amount {
-            color: #666;
-            font-size: 16px;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        .mercadopago-btn {
-            display: inline-block;
-            padding: 16px 40px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
+            font-family: var(--texto);
             font-size: 17px;
-            transition: all 0.3s ease;
-            min-width: 250px;
-            background: linear-gradient(135deg, #00b1ea 0%, #009bd3 100%);
-            color: white;
-            box-shadow: 0 6px 20px rgba(0, 177, 234, 0.3);
+            line-height: 1.55;
+            color: var(--tinta);
+            background: var(--papel);
         }
 
-        .mercadopago-btn:hover {
-            background: linear-gradient(135deg, #009bd3 0%, #0088bb 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 177, 234, 0.4);
+        a { color: inherit; }
+        :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+        /* ---------- Barra superior ---------- */
+        .top {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(255,255,255,.96);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--linea);
         }
-
-        .card-icons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+        .top .wrap { display: flex; align-items: center; gap: 24px; height: 64px; }
+        .logo {
+            font-family: var(--display); font-weight: 800; font-size: 1.55rem;
+            letter-spacing: -0.02em; text-decoration: none; color: var(--azul);
         }
-
-        .card-icon {
-            width: 50px;
-            height: 32px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        .logo .x { color: var(--rojo); }
+        .top nav { margin-left: auto; display: flex; gap: 4px; }
+        .top nav a {
+            padding: 8px 12px; border-radius: 8px; text-decoration: none;
+            font-weight: 600; font-size: .95rem;
         }
+        .top nav a:hover { background: var(--papel); }
 
-        .visa { background-color: #1a1f71; }
-        .mastercard { background-color: #eb001b; }
-        .discover { background-color: #ff6000; }
-
-        /* FAQ */
-        .faq-section {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
+        .btn-wa {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--wa); color: #fff; font-weight: 700; text-decoration: none;
+            border-radius: 999px; padding: 10px 18px; font-size: .95rem;
+            transition: background .2s;
         }
+        .btn-wa:hover { background: var(--wa-hover); }
 
-        .faq-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .faq-header h2 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .faq-header h2::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 5px;
-            background: linear-gradient(90deg, #1e40af, #10b981);
-            margin: 1.5rem auto;
-            border-radius: 3px;
-        }
-
-        .faq-categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            justify-content: center;
-        }
-
-        .category-filter {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 0.9rem 1.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 700;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .category-filter:hover {
-            border-color: #1e40af;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);
-        }
-
-        .category-filter.active {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-            border-color: #1e40af;
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
-        }
-
-        .faq-container {
+        /* ---------- Hero ---------- */
+        .hero { padding: 40px 0 56px; }
+        .hero .wrap {
             display: grid;
-            gap: 1.2rem;
+            grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+            grid-template-rows: auto 1fr;
+            grid-template-areas: "copy calc" "hechos calc";
+            column-gap: 64px;
         }
+        .copy { grid-area: copy; padding-top: 12px; }
+        .calc { grid-area: calc; }
+        .hechos { grid-area: hechos; align-self: start; }
 
-        .faq-item {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .copy h1 {
+            font-family: var(--display); font-weight: 800;
+            font-size: clamp(2.1rem, 4.6vw, 3.5rem);
+            line-height: 1.04; letter-spacing: -0.025em; max-width: 15ch;
         }
+        .copy .lead { margin-top: 18px; font-size: 1.15rem; color: var(--suave); max-width: 44ch; }
 
-        .faq-item:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+        .hechos { margin-top: 28px; max-width: 46ch; border-top: 1px solid var(--linea); }
+        .hechos div { display: flex; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--linea); }
+        .hechos dt { font-weight: 700; flex: 0 0 9.5rem; }
+        .hechos dd { color: var(--suave); }
+
+        /* ---------- Calculadora ---------- */
+        .calc {
+            background: #fff; border: 1px solid var(--linea); border-radius: 20px;
+            padding: 22px; box-shadow: 0 14px 44px rgba(16, 32, 77, .10);
         }
+        .calc label, .calc .etq { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+        .campo + .campo { margin-top: 14px; }
 
-        .faq-question {
-            padding: 1.8rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            border: none;
-            width: 100%;
-            text-align: left;
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #1e293b;
-            transition: all 0.3s ease;
+        .sel {
+            width: 100%; appearance: none; -webkit-appearance: none;
+            border: 1.5px solid var(--linea); border-radius: 12px;
+            padding: 13px 42px 13px 14px; font: 600 1rem var(--texto); color: var(--tinta);
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%2310204d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 15px center;
         }
+        .sel:focus { border-color: var(--azul); box-shadow: 0 0 0 3px rgba(28, 63, 170, .15); outline: 0; }
 
-        .faq-question:hover {
-            background: #f8fafc;
-            color: #1e40af;
+        .monto {
+            display: flex; align-items: center;
+            border: 1.5px solid var(--linea); border-radius: 12px; background: #fff; overflow: hidden;
         }
-
-        .faq-icon {
-            font-size: 1.8rem;
-            transition: transform 0.3s ease;
-            color: #1e40af;
-            font-weight: bold;
+        .monto:focus-within { border-color: var(--azul); box-shadow: 0 0 0 3px rgba(28, 63, 170, .15); }
+        .monto input {
+            flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+            padding: 11px 14px; font: 700 1.55rem var(--display); color: var(--tinta);
         }
+        .monto .moneda { padding: 0 16px; font-weight: 700; color: var(--suave); font-size: .95rem; }
+        .monto.grande input { font-size: 2.1rem; padding: 12px 14px; }
+        .monto.grande { border-color: var(--tinta); }
 
-        .faq-item.active .faq-icon {
-            transform: rotate(45deg);
+        .tasa {
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            margin-top: 16px; padding: 12px 14px; background: var(--papel);
+            border-radius: 12px; font-weight: 700;
         }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            background: #f8fafc;
-            padding: 0 1.8rem;
+        .tag {
+            display: inline-block; background: var(--oro-suave); color: var(--oro-texto);
+            border-radius: 999px; padding: 2px 10px; font-size: .8rem; font-weight: 700; white-space: nowrap;
         }
+        .info { margin-top: 12px; font-size: .92rem; color: var(--suave); min-height: 2.9em; }
+        .info strong { color: var(--tinta); }
+        .info .alerta { color: #b3191f; font-weight: 600; }
 
-        .faq-item.active .faq-answer {
-            max-height: 600px;
-            padding: 1.8rem;
+        .cta { display: flex; width: 100%; margin-top: 14px; padding: 15px; font-size: 1.05rem; }
+        .nota-cta { text-align: center; font-size: .85rem; color: var(--suave); margin-top: 10px; }
+
+        .suspendido { text-align: center; padding: 20px 4px; }
+        .suspendido p { margin-bottom: 14px; color: var(--suave); }
+
+        /* ---------- Bloques ---------- */
+        .bloque { padding: 60px 0; }
+        .bloque.blanco { background: #fff; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); }
+        .bloque h2 {
+            font-family: var(--display); font-weight: 800; letter-spacing: -0.02em;
+            font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.1;
         }
+        .sub { color: var(--suave); margin-top: 8px; max-width: 60ch; }
 
-        .faq-answer p {
-            color: #475569;
-            margin-bottom: 1rem;
-            line-height: 1.8;
+        /* ---------- Tabla de tasas ---------- */
+        .estado { margin-top: 14px; font-size: .92rem; color: var(--suave); display: flex; gap: 9px; align-items: center; }
+        .punto { width: 9px; height: 9px; border-radius: 50%; background: #1faa59; flex: none; }
+        .punto.ref { background: #f4b400; }
+
+        .tabla-wrap { margin-top: 20px; border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; background: #fff; }
+        .tabla { width: 100%; border-collapse: collapse; }
+        .tabla th {
+            text-align: left; font-size: .85rem; font-weight: 700; color: var(--suave);
+            padding: 12px 18px; background: #f8f9fd; border-bottom: 1px solid var(--linea);
         }
-
-        .faq-answer ul {
-            color: #475569;
-            padding-left: 1.5rem;
-            line-height: 1.8;
+        .tabla td { padding: 14px 18px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+        .tabla tr:last-child td { border-bottom: 0; }
+        .tabla .grupo td {
+            background: #f8f9fd; font: 800 .98rem var(--display); padding: 10px 18px;
         }
+        .prod strong { display: block; }
+        .prod small { color: var(--suave); font-size: .85rem; }
+        .num { font-family: var(--display); font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+        .sin { color: var(--suave); }
 
-        .faq-answer li {
-            margin-bottom: 0.7rem;
+        /* ---------- Promo ---------- */
+        .promo-in { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .promo-in img {
+            width: 100%; max-width: 720px; height: auto; border-radius: 16px;
+            border: 1px solid var(--linea);
         }
-
-        .highlight {
-            background: linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%);
-            color: white;
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            font-weight: 700;
+        .btn-azul {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--azul); color: #fff; font: 700 1rem var(--texto);
+            border: 0; border-radius: 999px; padding: 13px 26px; cursor: pointer; text-decoration: none;
+            transition: background .2s;
         }
+        .btn-azul:hover { background: #163490; }
 
-        /* FOOTER */
-        footer {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
-            padding: 3rem 1rem;
-            text-align: center;
+        /* ---------- Efectivo ---------- */
+        .efe { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 44px; margin-top: 28px; }
+        .pasos { list-style: none; counter-reset: paso; display: grid; gap: 20px; }
+        .pasos li { counter-increment: paso; position: relative; padding-left: 48px; }
+        .pasos li::before {
+            content: counter(paso); position: absolute; left: 0; top: 0; width: 33px; height: 33px;
+            border-radius: 50%; background: var(--tinta); color: #fff; display: grid; place-items: center;
+            font: 800 .95rem var(--display);
         }
+        .pasos strong { display: block; }
+        .pasos span { color: var(--suave); font-size: .95rem; }
 
-        footer p {
-            margin: 0.5rem 0;
-            font-size: 1rem;
+        .cob-titulo { font-weight: 700; margin-bottom: 12px; }
+        .provs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .prov { background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 12px 14px; }
+        .prov h3 { font: 800 .98rem var(--display); margin-bottom: 4px; }
+        .prov ul { list-style: none; color: var(--suave); font-size: .92rem; line-height: 1.45; }
+        .cob-nota { margin-top: 14px; font-size: .92rem; color: var(--suave); }
+
+        /* ---------- Pagos ---------- */
+        .metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 24px; }
+        .metodo { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 18px; }
+        .metodo h3 { font: 800 1.05rem var(--display); margin-bottom: 4px; }
+        .metodo p { color: var(--suave); font-size: .95rem; }
+        .btn-mp {
+            display: inline-block; margin-top: 12px; background: #009ee3; color: #fff;
+            font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-size: .95rem;
         }
+        .btn-mp:hover { background: #0088c4; }
+        .pagos-nota { margin-top: 16px; color: var(--suave); font-size: .95rem; }
 
-        footer a {
-            color: inherit;
-            text-decoration: none;
-            transition: color 0.3s ease;
+        /* ---------- FAQ ---------- */
+        .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+        .tab {
+            font: 700 .95rem var(--texto); color: var(--tinta); background: #fff;
+            border: 1.5px solid var(--linea); border-radius: 999px; padding: 9px 18px; cursor: pointer;
         }
+        .tab:hover { border-color: var(--azul); }
+        .tab[aria-selected="true"] { background: var(--tinta); border-color: var(--tinta); color: #fff; }
 
-        footer a:hover {
-            color: #fbbf24;
+        .faq { margin-top: 18px; display: grid; gap: 10px; max-width: 820px; }
+        .faq details { background: #fff; border: 1px solid var(--linea); border-radius: 12px; }
+        .faq summary {
+            list-style: none; cursor: pointer; padding: 16px 52px 16px 18px; font-weight: 700;
+            position: relative;
         }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .hero-banner {
-                min-height: 200px;
-            }
-
-            #intro h2 {
-                font-size: 1.8rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 320px;
-            }
-
-            .calculator {
-                padding: 16px 20px;
-            }
-
-            .payment-section {
-                padding: 30px 20px;
-            }
-
-            .faq-question {
-                padding: 1.2rem;
-                font-size: 1rem;
-            }
-
-            .faq-item.active .faq-answer {
-                padding: 1.2rem;
-            }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after {
+            content: '+'; position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+            font: 600 1.5rem var(--display); color: var(--azul);
         }
+        .faq details[open] summary::after { content: '\2212'; }
+        .faq .resp { padding: 0 18px 18px; color: #3b4766; }
+        .faq .resp p + p, .faq .resp p + ul, .faq .resp ul + p { margin-top: 10px; }
+        .faq .resp ul { padding-left: 1.2rem; }
+        .faq .resp li + li { margin-top: 6px; }
 
+        /* ---------- Pie ---------- */
+        footer { background: var(--tinta); color: #dfe5f7; padding: 44px 0; }
+        footer .wrap { display: grid; gap: 8px; }
+        footer .logo { color: #fff; font-size: 1.3rem; }
+        footer .logo .x { color: #ff5a5f; }
+        footer a { text-decoration: underline; text-underline-offset: 3px; }
+        footer a:hover { color: #fff; }
+        footer small { color: #aab4d4; }
+
+        /* ---------- Móvil ---------- */
+        @media (max-width: 900px) {
+            .hero .wrap { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "calc" "hechos"; row-gap: 24px; }
+            .copy h1 { max-width: none; }
+            .hechos { margin-top: 4px; }
+            .efe { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+        }
+        @media (max-width: 760px) {
+            .top nav { display: none; }
+            .top .btn-wa { margin-left: auto; }
+            .bloque { padding: 44px 0; }
+        }
+        @media (max-width: 700px) {
+            .tabla thead { display: none; }
+            .tabla, .tabla tbody, .tabla tr, .tabla td { display: block; width: 100%; }
+            .tabla tr.fila { padding: 12px 16px; border-bottom: 1px solid var(--linea); }
+            .tabla tr.fila:last-child { border-bottom: 0; }
+            .tabla td { border: 0; padding: 3px 0; display: flex; justify-content: space-between; gap: 14px; }
+            .tabla td::before { content: attr(data-l); color: var(--suave); font-size: .85rem; font-weight: 600; flex: none; }
+            .tabla td.prod { display: block; padding-bottom: 6px; }
+            .tabla td.prod::before { content: none; }
+            .tabla td.der { text-align: right; }
+            .tabla .grupo td { display: block; padding: 10px 16px; }
+            .tabla .grupo td::before { content: none; }
+        }
         @media (max-width: 480px) {
-            .hero-banner {
-                min-height: 150px;
-            }
-
-            .calculator-wrapper {
-                padding: 18px;
-            }
-
-            .calculator {
-                padding: 15px 18px;
-            }
+            .calc { padding: 18px; }
+            .hechos dt { flex-basis: 7.5rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            * { transition: none !important; }
         }
     </style>
 </head>
 <body>
-    <!-- HERO BANNER -->
-    <div class="hero-banner">
-        <img src="banner-navidad.jpg" alt="REMEXCUB - Remesas a Cuba">
-    </div>
 
-    <nav>
-        <ul>
-            <li><a href="#calculadora">💰 Calculadora</a></li>
-            <li><a href="#pagos">💳 Pagos</a></li>
-            <li><a href="#faq">❓ FAQ</a></li>
-        </ul>
-    </nav>
+    <header class="top">
+        <div class="wrap">
+            <a class="logo" href="#calculadora" aria-label="REMEXCUB, ir a la calculadora">REME<span class="x">X</span>CUB</a>
+            <nav aria-label="Secciones">
+                <a href="#calculadora">Calculadora</a>
+                <a href="#tasas">Tasas</a>
+                <a href="#efectivo" id="nav-efectivo">Efectivo</a>
+                <a href="#pagos">Pagos</a>
+                <a href="#faq">Preguntas</a>
+            </nav>
+            <a class="btn-wa" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)">WhatsApp</a>
+        </div>
+    </header>
 
-    <div class="container">
-        <!-- INTRO -->
-        <section id="intro">
-            <h2>Tu familia en Cuba está a solo un clic de distancia</h2>
-            <p>
-                Más de 6 años conectando corazones. Envíos rápidos, seguros y con el mejor tipo de cambio del mercado.
-            </p>
-            
-            <div class="cta-buttons">
-                <!-- ✅ BOTÓN WHATSAPP CON CONVERSIÓN GOOGLE ADS -->
-                <a onclick="return gtag_report_conversion('https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba');"
-                   href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
-                   class="btn btn-whatsapp" 
-                   target="_blank">
-                    📱 Contactar por WhatsApp
-                </a>
-                <a href="#calculadora" 
-                   class="btn btn-calculator">
-                    🧮 Calcular mi remesa
-                </a>
-            </div>
-        </section>
+    <main>
+        <!-- ================= HERO + CALCULADORA ================= -->
+        <section class="hero" id="calculadora">
+            <div class="wrap">
+                <div class="copy">
+                    <h1>Tu familia en Cuba está a solo un clic de distancia</h1>
+                    <p class="lead">Remesas de México a Cuba desde octubre de 2019. Envíos rápidos, seguros y con el mejor tipo de cambio del mercado.</p>
+                </div>
 
-        <!-- CALCULADORA -->
-        <section id="calculadora">
-            <div class="calculator-wrapper">
-                <div class="calculator">
-                    
-                    <div class="input-group">
-                        <label>Tipo de Conversión</label>
-                        <select id="conversionType">
-                            <option value="mxn_to_cup">MXN a CUP</option>
-                            <option value="mxn_to_mlc">MXN a MLC</option>
-                            <option value="mxn_to_usd">MXN a USD</option>
-                            <option value="cup_to_mxn">CUP a MXN</option>
-                            <option value="mlc_to_mxn">MLC a MXN</option>
-                            <option value="usd_to_mxn">USD a MXN</option>
-                        </select>
-                    </div>
+                <div class="calc">
+                    <noscript><p>Para usar la calculadora activa JavaScript, o escríbenos por WhatsApp y te cotizamos al momento.</p></noscript>
 
-                    <div class="input-group">
-                        <label id="inputLabel">Monto en Pesos Mexicanos (MXN)</label>
-                        <input type="number" id="inputAmount" placeholder="Ingrese el monto" inputmode="numeric">
-                    </div>
-
-                    <div id="result"></div>
-                    <div id="suspendedInfo" class="suspended"></div>
-                    <div id="discountInfo" class="discount-info"></div>
-                    
-                    <!-- ✅ BOTÓN WHATSAPP CALCULADORA CON CONVERSIÓN GOOGLE ADS -->
-                    <div id="whatsappCTA">
-                        <p style="font-size: 1.1em; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
-                            ⚡ ¿Listo para enviar?
-                        </p>
-                        <a onclick="return gtag_report_conversion('https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba');"
-                           href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" 
-                           target="_blank">
-                            📱 ENVIAR AHORA
-                        </a>
-                        <p style="font-size: 0.85em; color: #666; margin-top: 12px; line-height: 1.4;">
-                            ✅ Respuesta en 30 segundos • Entrega en 30 min
-                        </p>
-                    </div>
-                    
-                    <div id="error" class="error"></div>
-                    <div id="loadingStatus" class="loading">⏳ Cargando tasas actualizadas...</div>
-                    
-                    <div class="rate-info">
-                        🔄 Tasas de Cambio Vigentes 
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
-                            <span id="cupRateBtn" class="rate-button">CUP: ...</span>
-                            <span id="mlcRateBtn" class="rate-button" style="background: linear-gradient(135deg, #9C27B0 0%, #7b1fa2 100%);">MLC: ...</span>
-                            <span id="usdRateBtn" class="rate-button" style="background: linear-gradient(135deg, #FF9800 0%, #f57c00 100%);">USD: ...</span>
+                    <div id="calc-form">
+                        <div class="campo">
+                            <label for="producto">¿Qué recibe tu familiar?</label>
+                            <select id="producto" class="sel"></select>
                         </div>
-                        <div id="discountButton" class="rate-button" style="background: linear-gradient(135deg, #9C27B0 0%, #7b1fa2 100%); width: 100%; margin-top: 5px; font-size: 0.85em;">Cargando descuentos...</div>
+
+                        <div class="campo">
+                            <label for="mxn">Envías desde México</label>
+                            <div class="monto">
+                                <input id="mxn" type="text" inputmode="decimal" autocomplete="off" value="1000" aria-describedby="info">
+                                <span class="moneda">MXN</span>
+                            </div>
+                        </div>
+
+                        <div class="campo">
+                            <label for="recibe">Reciben en Cuba</label>
+                            <div class="monto grande">
+                                <input id="recibe" type="text" inputmode="decimal" autocomplete="off" aria-describedby="info">
+                                <span class="moneda" id="recibe-moneda">CUP</span>
+                            </div>
+                        </div>
+
+                        <div class="tasa" aria-live="polite">
+                            <span id="tasa-texto">Cargando tasas…</span>
+                            <span class="tag" id="tag-incentivo" hidden>Incentivo aplicado</span>
+                        </div>
+
+                        <p class="info" id="info" aria-live="polite"></p>
+
+                        <a class="btn-wa cta" id="cta" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)">Enviar por WhatsApp</a>
+                        <p class="nota-cta">Atención todos los días, de 9:00 am a 8:00 pm (hora de Monterrey)</p>
+                    </div>
+
+                    <div class="suspendido" id="calc-suspendido" hidden>
+                        <p>Por ahora no estamos cotizando desde la página. Escríbenos por WhatsApp y te atendemos.</p>
+                        <a class="btn-wa" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)">Escribir por WhatsApp</a>
                     </div>
                 </div>
+
+                <dl class="hechos">
+                    <div><dt>A tarjeta</dt><dd>Unos 30 minutos desde que el envío entra en proceso</dd></div>
+                    <div id="hecho-efectivo"><dt>Efectivo a domicilio</dt><dd>En 24 horas, en todas las provincias donde tenemos cobertura</dd></div>
+                    <div><dt>Reembolso</dt><dd>100% si la tarjeta no admite el envío</dd></div>
+                </dl>
             </div>
         </section>
 
-        <!-- PAGOS -->
-        <section id="pagos">
-            <div class="payment-section">
-                <p class="payment-subtitle">
-                    <svg class="shield-icon" viewBox="0 0 20 20">
-                        <path d="M10 1L3 4v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V4l-7-3z"></path>
-                        <path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" fill="none"></path>
-                    </svg>
-                    Pago protegido
-                </p>
+        <!-- ================= TASAS ================= -->
+        <section class="bloque blanco" id="tasas">
+            <div class="wrap">
+                <h2>Tasas de hoy</h2>
+                <p class="sub">Lo que ves aquí es lo que se aplica en la calculadora. Con montos grandes la tasa mejora.</p>
+                <p class="estado"><span class="punto" id="estado-punto"></span><span id="estado-texto">Cargando tasas…</span></p>
 
-                <div class="minimum-amount">
-                    <strong>Mínimo: $1,000 MXN</strong>
-                </div>
-
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <a href="https://link.mercadopago.com.mx/remexcub" target="_blank" class="mercadopago-btn">
-                        💳 Pagar con Mercado Pago
-                    </a>
-                    
-                    <div class="card-icons">
-                        <div class="card-icon visa">VISA</div>
-                        <div class="card-icon mastercard">MC</div>
-                        <div class="card-icon discover">DISC</div>
-                    </div>
+                <div class="tabla-wrap">
+                    <table class="tabla">
+                        <thead>
+                            <tr>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Tasa</th>
+                                <th scope="col">Con incentivo</th>
+                                <th scope="col">Mínimo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-cuerpo"></tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ -->
-        <section id="faq">
-            <div class="faq-section">
-                <div class="faq-header">
-                    <h2>❓ Preguntas Frecuentes</h2>
-                    <p>Encuentra respuestas rápidas a las dudas más comunes sobre nuestros servicios de remesas a Cuba</p>
-                </div>
+        <!-- ================= PROMO DÓLARES ================= -->
+        <section class="bloque" id="promo-usd" hidden>
+            <div class="wrap promo-in">
+                <img src="banner-navidad.jpg" width="1408" height="768" loading="lazy"
+                     alt="Dólares directos a Cuba: tarjetas Clásica y Bandec Prepago. REMEXCUB">
+                <button type="button" class="btn-azul" id="btn-cotizar-usd">Cotizar dólares</button>
+            </div>
+        </section>
 
-                <div class="faq-categories">
-                    <div class="category-filter" data-category="proceso">⚡ Proceso</div>
-                    <div class="category-filter" data-category="pagos">💳 Pagos</div>
-                    <div class="category-filter" data-category="tiempos">⏰ Tiempos</div>
-                    <div class="category-filter" data-category="seguridad">🔒 Seguridad</div>
-                </div>
+        <!-- ================= EFECTIVO ================= -->
+        <section class="bloque blanco" id="efectivo" hidden>
+            <div class="wrap">
+                <h2>Efectivo a domicilio en Cuba</h2>
+                <p class="sub">Dólares en billetes de 50, que se entregan en múltiplos de 50 USD (100, 150, 200…), o pesos cubanos en efectivo. Sin monto máximo.</p>
 
-                <div class="faq-container">
-                    <div class="faq-item" data-category="proceso">
-                        <button class="faq-question">
-                            ¿Cómo funciona el proceso de envío de remesas?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>El proceso es muy sencillo y consta de 5 pasos:</p>
-                            <ul>
-                                <li><strong>1.</strong> Cotiza tu remesa usando nuestra calculadora</li>
-                                <li><strong>2.</strong> Paga directamente con Mercado Pago o escríbenos por WhatsApp para otros métodos (efectivo, transferencia, depósito)</li>
-                                <li><strong>3.</strong> Envíanos el comprobante y los datos de tu beneficiario</li>
-                                <li><strong>4.</strong> Validamos el pago y enviamos tu remesa</li>
-                                <li><strong>5.</strong> En <span class="highlight">30 minutos a 24 horas</span> recibes la confirmación</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="efe">
+                    <ol class="pasos">
+                        <li>
+                            <strong>Cotiza y elige el lugar</strong>
+                            <span>Escoge el producto en la calculadora y dinos en qué lugar de Cuba vive quien recibe.</span>
+                        </li>
+                        <li>
+                            <strong>Paga y manda los datos del receptor</strong>
+                            <span>Con tu comprobante, envíanos en un solo mensaje: carnet de identidad, nombre completo, dirección y celular en Cuba.</span>
+                        </li>
+                        <li>
+                            <strong>Entrega en 24 horas</strong>
+                            <span>El mensajero cuadra la hora con el receptor. Como prueba, te mandamos una foto del efectivo junto al carnet de identidad.</span>
+                        </li>
+                    </ol>
 
-                    <div class="faq-item" data-category="proceso">
-                        <button class="faq-question">
-                            ¿Qué datos necesito de mi familiar en Cuba?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Para enviar remesas de manera rápida y segura necesitas:</p>
-                            <ul>
-                                <li>Los <strong>16 dígitos impresos</strong> en el plástico de la tarjeta</li>
-                                <li>El <strong>número de celular</strong> de tu familiar</li>
-                            </ul>
-                            <p>Con estos datos podemos procesar tu remesa de forma inmediata.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="pagos">
-                        <button class="faq-question">
-                            ¿Cuáles son los límites de envío?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p><strong>Montos mínimos:</strong></p>
-                            <ul>
-                                <li>🇲🇽 <strong>500 MXN</strong> para remesas en MLC y CUP</li>
-                                <li>🇺🇸 <strong>50 USD</strong> para remesas en USD desde México</li>
-                                <li>🇺🇸 <strong>100 USD</strong> para remesas en USD desde EE.UU.</li>
-                            </ul>
-                            <p><strong>Montos máximos:</strong> <span class="highlight">¡Sin límite!</span> Aprovecha nuestros descuentos por volumen.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="pagos">
-                        <button class="faq-question">
-                            ¿Qué métodos de pago aceptan?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Ofrecemos múltiples opciones para tu comodidad:</p>
-                            <ul>
-                                <li><strong>Efectivo:</strong> En más de 120,000 sucursales en todo México</li>
-                                <li><strong>Transferencia bancaria:</strong> Desde la comodidad de tu app</li>
-                                <li><strong>Depósito bancario:</strong> En cualquier sucursal</li>
-                                <li><strong>Mercado Pago:</strong> Pago digital rápido y seguro</li>
-                            </ul>
-                            <p>Elige el método que más te convenga.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="pagos">
-                        <button class="faq-question">
-                            ¿Cuáles son las comisiones por envío?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Nuestras comisiones son transparentes:</p>
-                            <ul>
-                                <li><strong>Sin comisiones ocultas</strong> - nunca</li>
-                                <li>Usa nuestra <strong>calculadora</strong> y eso es exactamente lo que pagas</li>
-                                <li>Tipo de cambio actualizado en tiempo real</li>
-                                <li>Lo que ves es lo que pagas, garantizado</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="tiempos">
-                        <button class="faq-question">
-                            ¿Cuánto tiempo tarda en llegar la remesa?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Nuestro servicio es <span class="highlight">rápido y confiable</span>:</p>
-                            <ul>
-                                <li>Procesamiento: <strong>Mínimo 30 minutos</strong></li>
-                                <li>Máximo: <strong>Hasta 24 horas</strong> si hay demoras en la red bancaria de Cuba</li>
-                                <li>Disponibilidad: Lunes a Sábado, 9 AM - 7 PM</li>
-                            </ul>
-                            <p>Te mantenemos informado durante todo el proceso.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="tiempos">
-                        <button class="faq-question">
-                            ¿Cuál es el horario de atención?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Estamos aquí para ti:</p>
-                            <ul>
-                                <li><strong>Lunes a Sábado:</strong> 9:00 AM - 7:00 PM (Hora de Monterrey)</li>
-                                <li><strong>Domingos:</strong> Cerrado</li>
-                                <li><strong>WhatsApp:</strong> Respuesta rápida durante horario laboral</li>
-                                <li><strong>Procesamiento:</strong> Automático durante días laborables</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="seguridad">
-                        <button class="faq-question">
-                            ¿Qué pasa si mi remesa no llega a Cuba?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Ofrecemos <span class="highlight">100% Garantía de Reembolso</span>:</p>
-                            <ul>
-                                <li>Si por cuestiones del sistema bancario de Cuba tu familiar no puede recibir el envío</li>
-                                <li>Te devolvemos el <strong>100% de tu dinero</strong></li>
-                                <li>Sin preguntas, sin complicaciones</li>
-                            </ul>
-                            <p>Tu tranquilidad es nuestra prioridad.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="seguridad">
-                        <button class="faq-question">
-                            ¿Es seguro enviar dinero con REMEXCUB?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Absolutamente seguro:</p>
-                            <ul>
-                                <li><strong>6+ años de experiencia</strong> desde octubre 2019</li>
-                                <li>Miles de remesas enviadas exitosamente</li>
-                                <li>Garantía de reembolso del 100%</li>
-                                <li>Comunicación transparente en cada paso</li>
-                            </ul>
-                            <p>Somos el puente confiable entre tú y tus familiares en Cuba.</p>
-                        </div>
-                    </div>
-
-                    <div class="faq-item" data-category="proceso">
-                        <button class="faq-question">
-                            ¿A qué tipos de tarjetas puedo enviar?
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            <p>Enviamos a múltiples opciones:</p>
-                            <ul>
-                                <li><strong>Remesas en MLC y CUP</strong> a cualquier banco en Cuba</li>
-                                <li><strong>Remesas en USD</strong> a Tarjetas BANDEC PREPAGO USD</li>
-                                <li><strong>Remesas en USD</strong> a Tarjetas Clásica con INCENTIVOS</li>
-                            </ul>
-                            <p>Cubrimos todas las opciones bancarias disponibles en Cuba.</p>
-                        </div>
+                    <div>
+                        <p class="cob-titulo" id="cob-titulo">Dónde entregamos</p>
+                        <div class="provs" id="provs"></div>
+                        <p class="cob-nota">Entregamos solo en los lugares de cada provincia que aparecen en la lista. Si no ves el tuyo, escríbenos y te decimos.</p>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
+
+        <!-- ================= PAGOS ================= -->
+        <section class="bloque" id="pagos">
+            <div class="wrap">
+                <h2>Cómo pagas</h2>
+                <p class="sub">Elige lo que te quede más cómodo. Cuando confirmes tu envío por WhatsApp te damos los datos de pago.</p>
+
+                <div class="metodos">
+                    <div class="metodo">
+                        <h3>OXXO y tiendas</h3>
+                        <p>Depósito en efectivo en OXXO y en más de 120,000 sucursales y tiendas de todo México.</p>
+                    </div>
+                    <div class="metodo">
+                        <h3>Transferencia</h3>
+                        <p>Desde la app de tu banco.</p>
+                    </div>
+                    <div class="metodo">
+                        <h3>Depósito bancario</h3>
+                        <p>En cualquier sucursal.</p>
+                    </div>
+                    <div class="metodo">
+                        <h3>Mercado Pago</h3>
+                        <p>Con tarjeta, desde $1,000 MXN.</p>
+                        <a class="btn-mp" href="https://link.mercadopago.com.mx/remexcub" target="_blank" rel="noopener">Pagar con Mercado Pago</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PREGUNTAS FRECUENTES ================= -->
+        <section class="bloque blanco" id="faq">
+            <div class="wrap">
+                <h2>Preguntas frecuentes</h2>
+
+                <div class="tabs" role="tablist" aria-label="Temas">
+                    <button class="tab" role="tab" data-cat="proceso" aria-selected="true">Proceso</button>
+                    <button class="tab" role="tab" data-cat="pagos" aria-selected="false">Pagos</button>
+                    <button class="tab" role="tab" data-cat="tiempos" aria-selected="false">Tiempos</button>
+                    <button class="tab" role="tab" data-cat="efectivo" aria-selected="false" id="tab-efectivo">Efectivo</button>
+                    <button class="tab" role="tab" data-cat="seguridad" aria-selected="false">Seguridad</button>
+                </div>
+
+                <div class="faq" id="faq-lista">
+                    <!-- PROCESO -->
+                    <details data-cat="proceso">
+                        <summary>¿Cómo funciona el envío?</summary>
+                        <div class="resp">
+                            <ul>
+                                <li>Cotiza tu remesa en la calculadora.</li>
+                                <li>Escríbenos por WhatsApp. Te damos los datos para pagar, o puedes pagar con Mercado Pago.</li>
+                                <li>Envíanos el comprobante y los datos de quien recibe.</li>
+                                <li>Validamos el pago y hacemos el envío.</li>
+                                <li>Te confirmamos: a tarjeta, en unos 30 minutos; en efectivo, en un máximo de 24 horas.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details data-cat="proceso">
+                        <summary>¿Qué datos necesito de mi familiar en Cuba?</summary>
+                        <div class="resp">
+                            <p><strong>Envío a tarjeta:</strong> los 16 dígitos impresos en el plástico de la tarjeta. El celular de tu familiar es opcional y solo sirve para avisarle del depósito.</p>
+                            <p><strong>Envío en efectivo:</strong> carnet de identidad, nombre completo, dirección y celular en Cuba.</p>
+                        </div>
+                    </details>
+                    <details data-cat="proceso">
+                        <summary>¿A qué tarjetas puedo enviar?</summary>
+                        <div class="resp">
+                            <ul>
+                                <li><strong>CUP y MLC:</strong> tarjetas de Metropolitano, Bandec o BPA.</li>
+                                <li><strong>USD:</strong> tarjetas Bandec Prepago o Tropical, y tarjetas Clásica. Cada una tiene su propia tasa.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <!-- PAGOS -->
+                    <details data-cat="pagos" hidden>
+                        <summary>¿Cuál es el mínimo y el máximo?</summary>
+                        <div class="resp">
+                            <p>El mínimo depende del producto. Lo ves en la calculadora y en la columna Mínimo de la tabla de tasas. No hay monto máximo, y desde ciertos montos aplica una tasa con incentivo.</p>
+                            <p>Si envías desde EE.UU., el mínimo en remesas en USD es de 100 USD.</p>
+                        </div>
+                    </details>
+                    <details data-cat="pagos" hidden>
+                        <summary>¿Qué métodos de pago aceptan?</summary>
+                        <div class="resp">
+                            <ul>
+                                <li><strong>Efectivo:</strong> en OXXO y en más de 120,000 sucursales y tiendas de todo México.</li>
+                                <li><strong>Transferencia bancaria:</strong> desde la app de tu banco.</li>
+                                <li><strong>Depósito bancario:</strong> en cualquier sucursal.</li>
+                                <li><strong>Mercado Pago:</strong> con tarjeta, desde $1,000 MXN.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details data-cat="pagos" hidden>
+                        <summary>¿Cobran comisión por el envío?</summary>
+                        <div class="resp">
+                            <p>No. Lo que ves en la calculadora es exactamente lo que pagas, sin comisiones ocultas, y el tipo de cambio se actualiza en tiempo real.</p>
+                        </div>
+                    </details>
+
+                    <!-- TIEMPOS -->
+                    <details data-cat="tiempos" hidden>
+                        <summary>¿Cuánto tarda en llegar la remesa?</summary>
+                        <div class="resp">
+                            <p><strong>A tarjeta:</strong> unos 30 minutos desde que el envío entra en proceso, y hasta 24 horas si hay demoras en la red bancaria de Cuba. Si tu comprobante llega fuera de horario, sale de los primeros al arrancar el día.</p>
+                            <p><strong>En efectivo:</strong> 24 horas desde que recibimos el comprobante y los datos completos del receptor. Fuera de horario, el reloj arranca a las 9:00 am.</p>
+                        </div>
+                    </details>
+                    <details data-cat="tiempos" hidden>
+                        <summary>¿Cuál es el horario de atención?</summary>
+                        <div class="resp">
+                            <p>Todos los días, de 9:00 am a 8:00 pm (hora de Monterrey). Puedes escribirnos a cualquier hora y tu envío sale al arrancar el día.</p>
+                        </div>
+                    </details>
+
+                    <!-- EFECTIVO -->
+                    <details data-cat="efectivo" hidden>
+                        <summary>¿Cómo funciona el envío en efectivo?</summary>
+                        <div class="resp">
+                            <p>Entregamos dólares en billetes de 50 (en múltiplos de 50 USD) o pesos cubanos, en el domicilio del receptor. Cotizas, pagas, nos mandas el comprobante y los datos del receptor, y en 24 horas el mensajero cuadra la hora con él y entrega. Te mandamos como prueba una foto del efectivo junto al carnet de identidad.</p>
+                        </div>
+                    </details>
+                    <details data-cat="efectivo" hidden>
+                        <summary>¿Y si el receptor no está o hay una demora?</summary>
+                        <div class="resp">
+                            <ul>
+                                <li>Los domingos puede que no se entregue ese día.</li>
+                                <li>Si el receptor no está, se reprograma con 5 USD extra, que se pagan aparte en México.</li>
+                                <li>Hay reembolso si pasan 72 horas sin entregar por causa de REMEXCUB.</li>
+                            </ul>
+                            <p>Es Cuba: pueden surgir imprevistos, y siempre hacemos lo posible por cumplir.</p>
+                        </div>
+                    </details>
+
+                    <!-- SEGURIDAD -->
+                    <details data-cat="seguridad" hidden>
+                        <summary>¿Qué pasa si mi remesa no llega a Cuba?</summary>
+                        <div class="resp">
+                            <p>Tienes reembolso garantizado. Si por cuestiones del sistema bancario de Cuba tu familiar no puede recibir el envío en su tarjeta, te devolvemos el 100% de tu dinero.</p>
+                        </div>
+                    </details>
+                    <details data-cat="seguridad" hidden>
+                        <summary>¿Es seguro enviar dinero con REMEXCUB?</summary>
+                        <div class="resp">
+                            <ul>
+                                <li>Enviamos remesas a Cuba desde octubre de 2019.</li>
+                                <li>Miles de remesas enviadas con éxito.</li>
+                                <li>Reembolso garantizado en envíos a tarjeta.</li>
+                                <li>Te avisamos en cada paso del proceso.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <p>&copy; 2025 REMEXCUB - Remesas a Cuba desde México</p>
-        <p>📱 WhatsApp: <a href="https://wa.me/528143005468" style="color: #25d366;">+52 814 300 5468</a></p>
-        <p>📘 Facebook: <a href="https://www.facebook.com/Remexcub" style="color: #1877f2;">@Remexcub</a></p>
+        <div class="wrap">
+            <span class="logo">REME<span class="x">X</span>CUB</span>
+            <p>Remesas a Cuba desde México.</p>
+            <p>WhatsApp: <a href="https://wa.me/528143005468" onclick="return clicWA(event, this)">+52 814 300 5468</a></p>
+            <p>Facebook: <a href="https://www.facebook.com/Remexcub" target="_blank" rel="noopener">@Remexcub</a></p>
+            <p>Atención todos los días, de 9:00 am a 8:00 pm (hora de Monterrey).</p>
+            <p><a href="privacidad.html">Política de privacidad</a></p>
+            <small>&copy; <span id="anio">2026</span> REMEXCUB</small>
+        </div>
     </footer>
 
     <script>
-        // ========================================
-        // CALCULADORA - TASAS Y CONVERSIÓN
-        // ========================================
-        
-        const SHEET_ID = '1sDKFXvPq3vO_yHTQGbjrcQ76FFN59PiMJtwZ-ydaadM';
-        
-        let EXCHANGE_RATES = {
-            CUP_NORMAL: 29.15,
-            CUP_DISCOUNT: 29.80,
-            MLC_NORMAL: 16.30,
-            USD_NORMAL: 19.30,
-            USD_DISCOUNT: 18.90,
-            CUP_DISCOUNT_FROM: 3001,
-            USD_DISCOUNT_FROM: 500
+    (function () {
+        'use strict';
+
+        // ============================================================
+        // CONFIGURACIÓN
+        // ============================================================
+        const WA = '528143005468';
+        const MENSAJE_BASE = 'Hola, quiero enviar una remesa a Cuba';
+
+        // Pega aquí la URL (termina en /exec) de la implementación del Apps Script "tasas-web.gs".
+        // Mientras esté vacía, la página usa las tasas de referencia de más abajo.
+        const RATES_URL = '';
+
+        // Tasas de referencia (copia del Cotizador 2026 al 16/10/2026).
+        // Solo se usan si no se puede leer el Cotizador en vivo.
+        const FALLBACK = {
+            productos: [
+                { id: 'CUP',         servicio: 'CUP',                    categoria: 'tarjeta',  normal: 52.70, min: 300,    descuento: 53.35, descuentoDesde: 2500, descuentoUnidad: 'MXN' },
+                { id: 'MLC',         servicio: 'MLC',                    categoria: 'tarjeta',  normal: 15.20, min: 500,    descuento: null,  descuentoDesde: null, descuentoUnidad: null },
+                { id: 'USD_PREPAGO', servicio: 'USD Prepago o Tropical', categoria: 'tarjeta',  normal: 17.85, min: 500,    descuento: 17.50, descuentoDesde: 500,  descuentoUnidad: 'USD' },
+                { id: 'USD_CLASICA', servicio: 'USD Clásica',            categoria: 'tarjeta',  normal: 18.45, min: 500,    descuento: 18.05, descuentoDesde: 500,  descuentoUnidad: 'USD' },
+                { id: 'CUP_CASH',    servicio: 'CUP en efectivo',        categoria: 'efectivo', normal: 38.90, min: 1000,   descuento: 39.75, descuentoDesde: 2500, descuentoUnidad: 'MXN' },
+                { id: 'USD_CASH',    servicio: 'USD en mano',            categoria: 'efectivo', normal: 20.75, min: 1037.5, descuento: 20.20, descuentoDesde: 500,  descuentoUnidad: 'USD' }
+            ],
+            cobertura: [
+                { provincia: 'Pinar del Río', lugares: ['San Luis', 'Pinar del Río'] },
+                { provincia: 'Artemisa', lugares: ['Artemisa', 'San Antonio de los Baños', 'Güira de Melena'] },
+                { provincia: 'Isla de la Juventud', lugares: ['Nueva Gerona'] },
+                { provincia: 'La Habana', lugares: ['La Habana'] },
+                { provincia: 'Mayabeque', lugares: ['San José de las Lajas'] },
+                { provincia: 'Matanzas', lugares: ['Matanzas', 'Santa Marta', 'Varadero', 'Cárdenas'] },
+                { provincia: 'Cienfuegos', lugares: ['Cienfuegos'] },
+                { provincia: 'Villa Clara', lugares: ['Santa Clara'] },
+                { provincia: 'Sancti Spíritus', lugares: ['Fomento', 'Cabaiguán', 'Sancti Spíritus'] },
+                { provincia: 'Ciego de Ávila', lugares: ['Ciego de Ávila', 'Morón'] },
+                { provincia: 'Camagüey', lugares: ['Camagüey'] },
+                { provincia: 'Las Tunas', lugares: ['Amancio', 'Las Tunas', 'Puerto Padre'] },
+                { provincia: 'Holguín', lugares: ['Holguín'] },
+                { provincia: 'Granma', lugares: ['Niquero', 'Media Luna', 'Campechuela', 'Manzanillo', 'Bartolomé Masó', 'Yara', 'Río Cauto', 'Bayamo', 'Guisa', 'Cauto Cristo', 'Jiguaní'] },
+                { provincia: 'Santiago de Cuba', lugares: ['Santiago de Cuba'] },
+                { provincia: 'Guantánamo', lugares: ['Guantánamo'] }
+            ]
         };
 
-        let RATES = {};
-        let MINIMUMS = {};
+        // Nombres que ve el cliente. Un producto nuevo que no esté aquí usa el nombre que tenga en la hoja "Servicios".
+        const NOMBRES = {
+            CUP:         { label: 'CUP a tarjeta',                  cur: 'CUP', nota: 'Metropolitano, Bandec o BPA' },
+            MLC:         { label: 'MLC a tarjeta',                  cur: 'MLC', nota: 'Metropolitano, Bandec o BPA' },
+            USD_PREPAGO: { label: 'USD a tarjeta Prepago o Tropical', cur: 'USD', nota: 'Bandec Prepago o Tropical' },
+            USD_CLASICA: { label: 'USD a tarjeta Clásica',          cur: 'USD', nota: 'Tarjeta Clásica' },
+            CUP_CASH:    { label: 'CUP en efectivo',                cur: 'CUP', nota: 'A domicilio en Cuba' },
+            USD_CASH:    { label: 'USD en efectivo',                cur: 'USD', nota: 'Billetes de 50, en múltiplos de 50 USD' }
+        };
+        const PASO_USD_EFECTIVO = 50;
 
-        async function loadRatesFromGoogleSheets() {
-            try {
-                const loadingDiv = document.getElementById('loadingStatus');
-                loadingDiv.style.display = 'block';
-                
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
-                
-                const response = await fetch(url);
-                const text = await response.text();
-                
-                const lines = text.split('\n');
-                const data = {};
-                
-                for (let i = 2; i < lines.length; i++) {
-                    const columns = lines[i].split(',');
-                    if (columns.length >= 2 && columns[0]) {
-                        const key = columns[0].trim();
-                        const value = parseFloat(columns[1].trim());
-                        if (!isNaN(value)) {
-                            data[key] = value;
-                        }
-                    }
-                }
-                
-                if (data.CUP_NORMAL) EXCHANGE_RATES.CUP_NORMAL = data.CUP_NORMAL;
-                if (data.CUP_DISCOUNT) EXCHANGE_RATES.CUP_DISCOUNT = data.CUP_DISCOUNT;
-                if (data.MLC_NORMAL) EXCHANGE_RATES.MLC_NORMAL = data.MLC_NORMAL;
-                if (data.USD_NORMAL) EXCHANGE_RATES.USD_NORMAL = data.USD_NORMAL;
-                if (data.USD_DISCOUNT) EXCHANGE_RATES.USD_DISCOUNT = data.USD_DISCOUNT;
-                if (data.CUP_DISCOUNT_FROM) EXCHANGE_RATES.CUP_DISCOUNT_FROM = data.CUP_DISCOUNT_FROM;
-                if (data.USD_DISCOUNT_FROM) EXCHANGE_RATES.USD_DISCOUNT_FROM = data.USD_DISCOUNT_FROM;
-                
-                calculateDerivedRates();
-                updateRateDisplay();
-                
-                loadingDiv.style.display = 'none';
-                console.log('✅ Tasas cargadas exitosamente desde Google Sheets');
-                
-            } catch (error) {
-                console.error('❌ Error al cargar tasas desde Google Sheets:', error);
-                document.getElementById('loadingStatus').style.display = 'none';
-                calculateDerivedRates();
-                updateRateDisplay();
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
+        const $ = (id) => document.getElementById(id);
+        const nf0 = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 });
+        const nf2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const dinero = (v) => (Math.abs(v - Math.round(v)) < 1e-9 ? nf0.format(Math.round(v)) : nf2.format(v));
+        const tasa2 = (v) => nf2.format(v);
+        const leer = (s) => { const n = parseFloat(String(s).replace(/[^\d.]/g, '')); return isNaN(n) ? 0 : n; };
+
+        function meta(p) {
+            const n = NOMBRES[p.id];
+            return {
+                label: n ? n.label : p.servicio,
+                cur: n ? n.cur : p.id.split('_')[0],
+                nota: n ? n.nota : ''
+            };
+        }
+        const esEfectivoUSD = (p) => p.categoria === 'efectivo' && meta(p).cur === 'USD';
+
+        // ============================================================
+        // ESTADO
+        // ============================================================
+        let DATA = null;       // datos en uso (en vivo o de referencia)
+        let EN_VIVO = false;
+        let actual = null;     // producto elegido
+
+        // ============================================================
+        // CÁLCULO
+        // ============================================================
+        function elegirTasa(p, mxn) {
+            if (p.descuento == null) return { tasa: p.normal, incentivo: false };
+            const cur = meta(p).cur;
+            let aplica;
+            if (p.descuentoUnidad === 'MXN') aplica = mxn >= p.descuentoDesde;
+            else aplica = cur === 'CUP' ? (mxn * p.descuento >= p.descuentoDesde) : (mxn / p.descuento >= p.descuentoDesde);
+            return { tasa: aplica ? p.descuento : p.normal, incentivo: aplica };
+        }
+
+        // Pesos que envías -> lo que reciben
+        function cotizar(p, mxn) {
+            const cur = meta(p).cur;
+            const { tasa, incentivo } = elegirTasa(p, mxn);
+            let recibe, paga = mxn;
+            if (cur === 'CUP') {
+                recibe = Math.round(mxn * tasa);
+            } else if (esEfectivoUSD(p)) {
+                recibe = Math.floor(mxn / tasa / PASO_USD_EFECTIVO + 1e-9) * PASO_USD_EFECTIVO;
+                paga = Math.round(recibe * tasa * 100) / 100;
+            } else {
+                recibe = Math.floor(mxn / tasa * 100 + 1e-6) / 100;
             }
+            return { recibe, tasa, incentivo, paga };
         }
 
-        function calculateDerivedRates() {
-            RATES = {
-                MXN_TO_CUP: EXCHANGE_RATES.CUP_NORMAL,
-                MXN_TO_MLC: 1 / EXCHANGE_RATES.MLC_NORMAL,
-                MXN_TO_USD: 1 / EXCHANGE_RATES.USD_NORMAL,
-                CUP_TO_MXN: 1 / EXCHANGE_RATES.CUP_NORMAL,
-                MLC_TO_MXN: EXCHANGE_RATES.MLC_NORMAL,
-                USD_TO_MXN: EXCHANGE_RATES.USD_NORMAL,
-                MXN_TO_CUP_DISCOUNT: EXCHANGE_RATES.CUP_DISCOUNT,
-                MXN_TO_USD_DISCOUNT: 1 / EXCHANGE_RATES.USD_DISCOUNT,
-                CUP_TO_MXN_DISCOUNT: 1 / EXCHANGE_RATES.CUP_DISCOUNT,
-                USD_TO_MXN_DISCOUNT: EXCHANGE_RATES.USD_DISCOUNT
-            };
-
-            MINIMUMS = {
-                MXN_TO_CUP: 500,
-                MXN_TO_MLC: 500,
-                MXN_TO_USD: 50 * EXCHANGE_RATES.USD_NORMAL,
-                CUP_TO_MXN: 500,
-                MLC_TO_MXN: 500,
-                USD_TO_MXN: 50 * EXCHANGE_RATES.USD_NORMAL
-            };
+        // Lo que quieren que reciban -> pesos que envías
+        function pesosNecesarios(p, recibe) {
+            const cur = meta(p).cur;
+            if (cur === 'CUP') {
+                let mxn = recibe / p.normal;
+                if (p.descuento != null) {
+                    const conInc = recibe / p.descuento;
+                    const aplica = p.descuentoUnidad === 'MXN' ? conInc >= p.descuentoDesde : recibe >= p.descuentoDesde;
+                    if (aplica) mxn = conInc;
+                }
+                return Math.ceil(mxn);
+            }
+            const unidades = esEfectivoUSD(p)
+                ? Math.max(PASO_USD_EFECTIVO, Math.round(recibe / PASO_USD_EFECTIVO) * PASO_USD_EFECTIVO)
+                : recibe;
+            let precio = p.normal;
+            if (p.descuento != null) {
+                const aplica = p.descuentoUnidad === 'MXN' ? unidades * p.descuento >= p.descuentoDesde : unidades >= p.descuentoDesde;
+                if (aplica) precio = p.descuento;
+            }
+            return Math.ceil(unidades * precio * 100) / 100;
         }
 
-        function updateRateDisplay() {
-            document.getElementById('cupRateBtn').textContent = `CUP: ${EXCHANGE_RATES.CUP_NORMAL.toFixed(2)}`;
-            document.getElementById('mlcRateBtn').textContent = `MLC: ${EXCHANGE_RATES.MLC_NORMAL.toFixed(2)}`;
-            document.getElementById('usdRateBtn').textContent = `USD: ${EXCHANGE_RATES.USD_NORMAL.toFixed(2)}`;
-            document.getElementById('discountButton').textContent = 
-                `Descuentos: +${EXCHANGE_RATES.CUP_DISCOUNT_FROM} MXN = ${EXCHANGE_RATES.CUP_DISCOUNT.toFixed(2)} CUP | +${EXCHANGE_RATES.USD_DISCOUNT_FROM} USD = ${EXCHANGE_RATES.USD_DISCOUNT.toFixed(2)} MXN`;
-            
-            convertCurrency();
+        // ============================================================
+        // CALCULADORA (pantalla)
+        // ============================================================
+        function textoRecibe(p, v) {
+            const cur = meta(p).cur;
+            return (cur === 'CUP' || esEfectivoUSD(p) ? nf0.format(v) : nf2.format(v)) + ' ' + cur;
         }
 
-        const conversionType = document.getElementById('conversionType');
-        const inputLabel = document.getElementById('inputLabel');
-        const inputAmount = document.getElementById('inputAmount');
-        const resultDiv = document.getElementById('result');
-        const errorDiv = document.getElementById('error');
-        const suspendedDiv = document.getElementById('suspendedInfo');
-        const discountInfoDiv = document.getElementById('discountInfo');
-
-        conversionType.addEventListener('change', updateLabel);
-        inputAmount.addEventListener('input', convertCurrency);
-
-        function updateLabel() {
-            const type = conversionType.value;
-            const labels = {
-                'mxn_to_cup': 'Monto en Pesos Mexicanos (MXN)',
-                'mxn_to_mlc': 'Monto en Pesos Mexicanos (MXN)',
-                'mxn_to_usd': 'Monto en Pesos Mexicanos (MXN)',
-                'cup_to_mxn': 'Monto en Pesos Cubanos (CUP)',
-                'mlc_to_mxn': 'Monto en MLC',
-                'usd_to_mxn': 'Monto en USD'
-            };
-            inputLabel.textContent = labels[type];
-            convertCurrency();
+        function linkWA(texto) {
+            return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(texto);
         }
 
-        function convertCurrency() {
-            const type = conversionType.value;
-            const amount = parseFloat(inputAmount.value);
-            
-            resultDiv.textContent = '';
-            errorDiv.textContent = '';
-            errorDiv.style.display = 'none';
-            suspendedDiv.style.display = 'none';
-            discountInfoDiv.style.display = 'none';
+        function pintar(origen) {
+            const p = actual;
+            if (!p) return;
+            const m = meta(p);
+            const mxnIn = $('mxn'), recIn = $('recibe'), info = $('info'), tag = $('tag-incentivo');
 
-            if (isNaN(amount) || amount <= 0) {
-                document.getElementById('whatsappCTA').style.display = 'none';
+            $('recibe-moneda').textContent = m.cur;
+
+            let mxn = leer(mxnIn.value);
+            if (origen === 'recibe') {
+                mxn = pesosNecesarios(p, leer(recIn.value));
+                mxnIn.value = mxn > 0 ? dinero(mxn) : '';
+            }
+
+            tag.hidden = true;
+            info.textContent = '';
+            $('cta').href = linkWA(MENSAJE_BASE);
+
+            // Línea de tasa
+            const q = mxn > 0 ? cotizar(p, mxn) : null;
+            const tasaMostrada = q ? q.tasa : p.normal;
+            $('tasa-texto').textContent = m.cur === 'CUP'
+                ? '1 MXN = ' + tasa2(tasaMostrada) + ' CUP'
+                : '1 ' + m.cur + ' = ' + tasa2(tasaMostrada) + ' MXN';
+
+            if (!(mxn > 0)) {
+                if (origen !== 'recibe') recIn.value = '';
                 return;
             }
 
-            let convertedAmount, resultText, hasDiscount = false, discountText = '';
+            if (document.activeElement !== recIn) recIn.value = q.recibe > 0 ? (m.cur === 'CUP' || esEfectivoUSD(p) ? nf0.format(q.recibe) : nf2.format(q.recibe)) : '';
 
-            switch(type) {
-                case 'mxn_to_cup':
-                    if (amount < MINIMUMS.MXN_TO_CUP) {
-                        errorDiv.textContent = `El monto mínimo de envío es de ${MINIMUMS.MXN_TO_CUP} MXN`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    if (amount >= EXCHANGE_RATES.CUP_DISCOUNT_FROM) {
-                        convertedAmount = Math.round(amount * RATES.MXN_TO_CUP_DISCOUNT);
-                        hasDiscount = true;
-                        const normalAmount = Math.round(amount * RATES.MXN_TO_CUP);
-                        const savings = convertedAmount - normalAmount;
-                        discountText = `🎉😊 ¡Descuento aplicado! Recibes ${savings} CUP adicionales 🎊`;
-                    } else {
-                        convertedAmount = Math.round(amount * RATES.MXN_TO_CUP);
-                    }
-                    resultText = `${amount} MXN = ${convertedAmount} CUP`;
-                    break;
-
-                case 'mxn_to_mlc':
-                    if (amount < MINIMUMS.MXN_TO_MLC) {
-                        errorDiv.textContent = `El monto mínimo de envío es de ${MINIMUMS.MXN_TO_MLC} MXN`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    convertedAmount = (amount * RATES.MXN_TO_MLC).toFixed(2);
-                    resultText = `${amount} MXN = ${convertedAmount} MLC`;
-                    break;
-
-                case 'mxn_to_usd':
-                    if (amount < MINIMUMS.MXN_TO_USD) {
-                        errorDiv.textContent = `El monto mínimo de envío es de ${Math.round(MINIMUMS.MXN_TO_USD)} MXN (50 USD)`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    convertedAmount = (amount * RATES.MXN_TO_USD).toFixed(2);
-                    resultText = `${amount} MXN = ${convertedAmount} USD`;
-                    break;
-
-                case 'cup_to_mxn':
-                    convertedAmount = Math.round(amount * RATES.CUP_TO_MXN);
-                    if (convertedAmount < MINIMUMS.CUP_TO_MXN) {
-                        errorDiv.textContent = `El monto convertido debe ser al menos ${MINIMUMS.CUP_TO_MXN} MXN`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    resultText = `${amount} CUP = ${convertedAmount} MXN`;
-                    break;
-
-                case 'mlc_to_mxn':
-                    convertedAmount = Math.round(amount * RATES.MLC_TO_MXN);
-                    if (convertedAmount < MINIMUMS.MLC_TO_MXN) {
-                        errorDiv.textContent = `El monto convertido debe ser al menos ${MINIMUMS.MLC_TO_MXN} MXN`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    resultText = `${amount} MLC = ${convertedAmount} MXN`;
-                    break;
-
-                case 'usd_to_mxn':
-                    if (amount >= EXCHANGE_RATES.USD_DISCOUNT_FROM) {
-                        convertedAmount = Math.round(amount * RATES.USD_TO_MXN_DISCOUNT);
-                        hasDiscount = true;
-                        const normalAmount = Math.round(amount * RATES.USD_TO_MXN);
-                        const savings = normalAmount - convertedAmount;
-                        discountText = `🎉😊 ¡Descuento aplicado! Pagas ${savings} MXN menos 🎊`;
-                    } else {
-                        convertedAmount = Math.round(amount * RATES.USD_TO_MXN);
-                    }
-                    
-                    if (convertedAmount < MINIMUMS.USD_TO_MXN) {
-                        errorDiv.textContent = `El monto convertido debe ser al menos ${Math.round(MINIMUMS.USD_TO_MXN)} MXN (50 USD)`;
-                        errorDiv.style.display = 'block';
-                        document.getElementById('whatsappCTA').style.display = 'none';
-                        return;
-                    }
-                    resultText = `${amount} USD = ${convertedAmount} MXN`;
-                    break;
+            // Mínimo
+            if (p.min != null && mxn < p.min) {
+                const span = document.createElement('span');
+                span.className = 'alerta';
+                span.textContent = 'El mínimo para ' + m.label + ' es de ' + dinero(Math.ceil(p.min)) + ' MXN.';
+                info.appendChild(span);
+                return;
             }
 
-            resultDiv.textContent = resultText;
-            document.getElementById('whatsappCTA').style.display = 'block';
-            
-            if (hasDiscount) {
-                discountInfoDiv.textContent = discountText;
-                discountInfoDiv.style.display = 'block';
-            }
-        }
+            if (q.recibe <= 0) return;
 
-        // ========================================
-        // FAQ INTERACTIVIDAD
-        // ========================================
-        
-        document.querySelectorAll('.faq-question').forEach(button => {
-            button.addEventListener('click', () => {
-                const faqItem = button.parentElement;
-                const isActive = faqItem.classList.contains('active');
-                
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                
-                if (!isActive) {
-                    faqItem.classList.add('active');
+            // Mensaje de WhatsApp con la cotización
+            $('cta').href = linkWA(
+                'Hola, quiero enviar ' + dinero(q.paga) + ' MXN a Cuba (' + m.label + '). Recibirían ' + textoRecibe(p, q.recibe) + '.'
+            );
+
+            // Incentivo aplicado / por alcanzar
+            if (q.incentivo) {
+                tag.hidden = false;
+                const normal = cotizar({ ...p, descuento: null }, mxn);
+                const extra = q.recibe - normal.recibe;
+                if (extra > 0) {
+                    info.innerHTML = '';
+                    const s = document.createElement('span');
+                    s.innerHTML = 'Por la tasa con incentivo recibes <strong></strong> más.';
+                    s.querySelector('strong').textContent = textoRecibe(p, Math.round(extra * 100) / 100);
+                    info.appendChild(s);
                 }
-            });
-        });
+            } else if (p.descuento != null) {
+                const unidad = p.descuentoUnidad || 'MXN';
+                const s = document.createElement('span');
+                s.textContent = 'Desde ' + dinero(p.descuentoDesde) + ' ' + unidad + ' la tasa mejora a ' +
+                    tasa2(p.descuento) + (m.cur === 'CUP' ? ' CUP por MXN.' : ' MXN por ' + m.cur + '.');
+                info.appendChild(s);
+            }
 
-        document.querySelectorAll('.category-filter').forEach(filter => {
-            filter.addEventListener('click', () => {
-                const category = filter.dataset.category;
-                
-                document.querySelectorAll('.category-filter').forEach(f => f.classList.remove('active'));
-                filter.classList.add('active');
-                
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    if (item.dataset.category === category) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.style.display = 'none';
-                item.classList.remove('active');
-            });
-        });
-
-        // ========================================
-        // INICIALIZACIÓN
-        // ========================================
-        
-        async function init() {
-            await loadRatesFromGoogleSheets();
-            updateLabel();
-            setInterval(loadRatesFromGoogleSheets, 5 * 60 * 1000);
+            // Billetes de 50
+            if (esEfectivoUSD(p) && Math.abs(q.paga - mxn) > 0.004) {
+                const s = document.createElement('div');
+                s.textContent = 'Se entrega en billetes de 50 USD: ' + nf0.format(q.recibe) + ' USD por ' + dinero(q.paga) + ' MXN.';
+                info.appendChild(s);
+            }
         }
 
-        init();
+        function llenarSelect(conservarId) {
+            const sel = $('producto');
+            sel.innerHTML = '';
+            const grupos = [
+                { cat: 'tarjeta',  titulo: 'A tarjeta en Cuba' },
+                { cat: 'efectivo', titulo: 'Efectivo a domicilio en Cuba' }
+            ];
+            grupos.forEach((g) => {
+                const lista = DATA.productos.filter((p) => p.categoria === g.cat);
+                if (!lista.length) return;
+                const og = document.createElement('optgroup');
+                og.label = g.titulo;
+                lista.forEach((p) => {
+                    const o = document.createElement('option');
+                    o.value = p.id;
+                    o.textContent = meta(p).label;
+                    og.appendChild(o);
+                });
+                sel.appendChild(og);
+            });
+            const existe = DATA.productos.find((p) => p.id === conservarId);
+            sel.value = existe ? existe.id : (DATA.productos[0] && DATA.productos[0].id);
+            actual = DATA.productos.find((p) => p.id === sel.value) || null;
+        }
+
+        // ============================================================
+        // TABLA DE TASAS
+        // ============================================================
+        function celda(tr, etiqueta, clase) {
+            const td = document.createElement('td');
+            td.dataset.l = etiqueta;
+            if (clase) td.className = clase;
+            tr.appendChild(td);
+            return td;
+        }
+
+        function pintarTabla() {
+            const cuerpo = $('tabla-cuerpo');
+            cuerpo.innerHTML = '';
+            [{ cat: 'tarjeta', titulo: 'A tarjeta en Cuba' }, { cat: 'efectivo', titulo: 'Efectivo a domicilio en Cuba' }].forEach((g) => {
+                const lista = DATA.productos.filter((p) => p.categoria === g.cat);
+                if (!lista.length) return;
+
+                const tg = document.createElement('tr');
+                tg.className = 'grupo';
+                const tdg = document.createElement('td');
+                tdg.colSpan = 4;
+                tdg.textContent = g.titulo;
+                tg.appendChild(tdg);
+                cuerpo.appendChild(tg);
+
+                lista.forEach((p) => {
+                    const m = meta(p);
+                    const tr = document.createElement('tr');
+                    tr.className = 'fila';
+
+                    const t1 = celda(tr, 'Producto', 'prod');
+                    const st = document.createElement('strong'); st.textContent = m.label; t1.appendChild(st);
+                    if (m.nota) { const sm = document.createElement('small'); sm.textContent = m.nota; t1.appendChild(sm); }
+
+                    const t2 = celda(tr, 'Tasa', 'der');
+                    const n2 = document.createElement('span'); n2.className = 'num';
+                    n2.textContent = m.cur === 'CUP' ? '1 MXN = ' + tasa2(p.normal) + ' CUP' : '1 ' + m.cur + ' = ' + tasa2(p.normal) + ' MXN';
+                    t2.appendChild(n2);
+
+                    const t3 = celda(tr, 'Con incentivo', 'der');
+                    if (p.descuento != null) {
+                        const n3 = document.createElement('span'); n3.className = 'num';
+                        n3.textContent = m.cur === 'CUP' ? tasa2(p.descuento) + ' CUP' : tasa2(p.descuento) + ' MXN';
+                        t3.appendChild(n3);
+                        const sm = document.createElement('small');
+                        sm.className = 'sin';
+                        sm.textContent = ' desde ' + dinero(p.descuentoDesde) + ' ' + (p.descuentoUnidad || 'MXN');
+                        t3.appendChild(sm);
+                    } else {
+                        const s = document.createElement('span'); s.className = 'sin'; s.textContent = 'Sin incentivo'; t3.appendChild(s);
+                    }
+
+                    const t4 = celda(tr, 'Mínimo', 'der');
+                    const n4 = document.createElement('span'); n4.className = 'num';
+                    n4.textContent = p.min != null ? dinero(Math.ceil(p.min)) + ' MXN' : '—';
+                    t4.appendChild(n4);
+
+                    cuerpo.appendChild(tr);
+                });
+            });
+
+            const punto = $('estado-punto'), texto = $('estado-texto');
+            if (EN_VIVO) {
+                const hoy = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Mexico_City' });
+                punto.className = 'punto';
+                texto.textContent = 'Vigentes hoy, ' + hoy + '. Se actualizan solas.';
+            } else {
+                punto.className = 'punto ref';
+                texto.textContent = 'Tasas de referencia. Confirma la tasa exacta por WhatsApp antes de pagar.';
+            }
+        }
+
+        // ============================================================
+        // COBERTURA DE EFECTIVO
+        // ============================================================
+        function pintarCobertura() {
+            const hayEfectivo = DATA.productos.some((p) => p.categoria === 'efectivo');
+            $('efectivo').hidden = !hayEfectivo;
+            $('nav-efectivo').hidden = !hayEfectivo;
+            $('hecho-efectivo').hidden = !hayEfectivo;
+            $('tab-efectivo').hidden = !hayEfectivo;
+
+            const cont = $('provs');
+            cont.innerHTML = '';
+            const cob = (DATA.cobertura && DATA.cobertura.length) ? DATA.cobertura : [];
+            let lugares = 0;
+            cob.forEach((c) => {
+                const d = document.createElement('div'); d.className = 'prov';
+                const h = document.createElement('h3'); h.textContent = c.provincia; d.appendChild(h);
+                const ul = document.createElement('ul');
+                c.lugares.forEach((l) => { const li = document.createElement('li'); li.textContent = l; ul.appendChild(li); lugares++; });
+                d.appendChild(ul);
+                cont.appendChild(d);
+            });
+            $('cob-titulo').textContent = cob.length
+                ? 'Entregamos en ' + lugares + ' lugares de ' + cob.length + ' provincias'
+                : 'Dónde entregamos';
+        }
+
+        // ============================================================
+        // APLICAR DATOS
+        // ============================================================
+        function aplicar(datos, enVivo) {
+            DATA = datos;
+            EN_VIVO = enVivo;
+
+            const hay = DATA.productos.length > 0;
+            $('calc-form').hidden = !hay;
+            $('calc-suspendido').hidden = hay;
+            $('tasas').hidden = !hay;
+            $('promo-usd').hidden = !DATA.productos.some((p) => p.categoria === 'tarjeta' && meta(p).cur === 'USD');
+
+            if (!hay) { pintarCobertura(); return; }
+
+            llenarSelect(actual && actual.id);
+            pintarTabla();
+            pintarCobertura();
+            pintar('mxn');
+        }
+
+        function datosValidos(d) {
+            return d && Array.isArray(d.productos) &&
+                d.productos.every((p) => p && typeof p.id === 'string' && typeof p.normal === 'number' && p.normal > 0);
+        }
+
+        async function cargar() {
+            if (!RATES_URL) {
+                if (!DATA) aplicar(FALLBACK, false);
+                return;
+            }
+            try {
+                const ctl = new AbortController();
+                const t = setTimeout(() => ctl.abort(), 8000);
+                const r = await fetch(RATES_URL, { signal: ctl.signal, cache: 'no-store' });
+                clearTimeout(t);
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const d = await r.json();
+                if (!datosValidos(d)) throw new Error('Respuesta sin el formato esperado');
+                if (!d.cobertura) d.cobertura = FALLBACK.cobertura;
+                aplicar(d, true);
+            } catch (e) {
+                console.warn('No se pudieron leer las tasas en vivo; se usa la última versión disponible.', e);
+                if (!DATA) aplicar(FALLBACK, false);
+            }
+        }
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        $('producto').addEventListener('change', () => {
+            actual = DATA.productos.find((p) => p.id === $('producto').value);
+            const mxn = leer($('mxn').value);
+            if (actual && actual.min != null && mxn < actual.min) $('mxn').value = dinero(Math.ceil(actual.min));
+            pintar('mxn');
+        });
+        $('mxn').addEventListener('input', () => pintar('mxn'));
+        $('recibe').addEventListener('input', () => pintar('recibe'));
+        $('mxn').addEventListener('blur', () => { const n = leer($('mxn').value); if (n > 0) $('mxn').value = dinero(n); });
+        $('recibe').addEventListener('blur', () => pintar('mxn'));
+
+        $('btn-cotizar-usd').addEventListener('click', () => {
+            const p = DATA.productos.find((x) => x.categoria === 'tarjeta' && meta(x).cur === 'USD');
+            if (!p) return;
+            $('producto').value = p.id;
+            actual = p;
+            const mxn = leer($('mxn').value);
+            if (p.min != null && mxn < p.min) $('mxn').value = dinero(Math.ceil(p.min));
+            pintar('mxn');
+            $('calculadora').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Preguntas frecuentes por tema
+        function mostrarTema(cat) {
+            document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.cat === cat)));
+            document.querySelectorAll('#faq-lista details').forEach((d) => {
+                d.hidden = d.dataset.cat !== cat;
+                if (d.hidden) d.open = false;
+            });
+        }
+        document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => mostrarTema(t.dataset.cat)));
+        mostrarTema('proceso');
+
+        $('anio').textContent = new Date().getFullYear();
+
+        // Botones de WhatsApp: registran la conversión y abren el chat.
+        window.clicWA = function (ev, a) {
+            if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button > 0) return true;
+            return gtag_report_conversion(a.href);
+        };
+
+        // ============================================================
+        // ARRANQUE
+        // ============================================================
+        cargar();
+        setInterval(cargar, 5 * 60 * 1000);
+    })();
     </script>
 </body>
 </html>
