@@ -194,6 +194,9 @@
         .estado { margin-top: 14px; font-size: .92rem; color: var(--suave); display: flex; gap: 9px; align-items: center; }
         .punto { width: 9px; height: 9px; border-radius: 50%; background: #1faa59; flex: none; }
         .punto.ref { background: #f4b400; }
+        .punto.vivo { animation: latido 2s ease-in-out infinite; }
+        @keyframes latido { 0% { box-shadow: 0 0 0 0 rgba(31,170,89,.45); } 70%, 100% { box-shadow: 0 0 0 8px rgba(31,170,89,0); } }
+        @media (prefers-reduced-motion: reduce) { .punto.vivo { animation: none; } }
 
         .tabla-wrap { margin-top: 20px; border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; background: #fff; }
         .tabla { width: 100%; border-collapse: collapse; }
@@ -920,12 +923,18 @@
 
             const punto = $('estado-punto'), texto = $('estado-texto');
             if (EN_VIVO) {
-                const hoy = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Mexico_City' });
-                punto.className = 'punto';
-                texto.textContent = 'Vigentes hoy, ' + hoy + '. Se actualizan solas.';
+                // Hora a la que el Cotizador entregó estas tasas (si no viene, la hora de este momento)
+                let cuando = new Date(DATA.generado);
+                if (isNaN(cuando)) cuando = new Date();
+                const fh = cuando.toLocaleString('es-MX', {
+                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+                    hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Monterrey'
+                });
+                punto.className = 'punto vivo';
+                texto.textContent = 'Tasas en vivo · ' + fh + ' (hora de Monterrey)';
             } else {
                 punto.className = 'punto ref';
-                texto.textContent = 'Tasas de referencia. Confirma la tasa exacta por WhatsApp antes de pagar.';
+                texto.textContent = 'Tasas de referencia del 16 de octubre de 2026. Confirma la tasa exacta por WhatsApp antes de pagar.';
             }
         }
 
@@ -1039,7 +1048,7 @@
         // ARRANQUE
         // ============================================================
         cargar();
-        setInterval(cargar, 5 * 60 * 1000);
+        setInterval(cargar, 60 * 1000);
     })();
     </script>
 </body>
