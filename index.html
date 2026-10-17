@@ -227,7 +227,7 @@
 
         /* ---------- Efectivo ---------- */
         .efe { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 44px; margin-top: 28px; }
-        .pasos { list-style: none; counter-reset: paso; display: grid; gap: 20px; }
+        .pasos { list-style: none; counter-reset: paso; display: grid; gap: 20px; align-content: start; }
         .pasos li { counter-increment: paso; position: relative; padding-left: 48px; }
         .pasos li::before {
             content: counter(paso); position: absolute; left: 0; top: 0; width: 33px; height: 33px;
