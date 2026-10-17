@@ -53,7 +53,7 @@
             --rojo: #d7262c;
             --oro-suave: #fff1bf;
             --oro-texto: #5c4300;
-            --papel: #f4f6fb;
+            --papel: #edf3ff;
             --linea: #dbe1ee;
             --suave: #56627f;
             --wa: #12924a;
@@ -109,7 +109,13 @@
         .btn-wa:hover { background: var(--wa-hover); }
 
         /* ---------- Hero ---------- */
-        .hero { padding: 40px 0 56px; }
+        .hero {
+            padding: 40px 0 56px;
+            background:
+                radial-gradient(820px 420px at 88% -8%, rgba(28, 63, 170, .17), transparent 70%),
+                radial-gradient(700px 380px at -6% 55%, rgba(110, 165, 255, .30), transparent 70%),
+                linear-gradient(180deg, #d6e5ff 0%, #e6efff 100%);
+        }
         .hero .wrap {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
@@ -272,6 +278,34 @@
         .faq .resp li + li { margin-top: 6px; }
 
         /* ---------- Pie ---------- */
+
+        /* ---------- Banda de incentivo ---------- */
+        .banda { background: linear-gradient(120deg, #17348f 0%, var(--azul) 55%, #2a56d6 100%); color: #fff; padding: 30px 0; }
+        .banda-fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; }
+        .banda-txt strong { display: block; font-family: var(--display); font-weight: 800; font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: -0.015em; line-height: 1.1; }
+        .banda-txt span { display: block; margin-top: 4px; color: #d4e0ff; }
+        .banda-btn {
+            background: #fff; color: var(--azul); font-weight: 700; text-decoration: none;
+            border-radius: 999px; padding: 11px 20px; transition: transform .15s;
+        }
+        .banda-btn:hover { transform: translateY(-1px); }
+        .banda-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+        .chip { flex: 1 1 190px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); border-radius: 14px; padding: 11px 15px; }
+        .chip small { display: block; color: #d4e0ff; font-size: .82rem; font-weight: 600; }
+        .chip b { display: block; font-family: var(--display); font-weight: 800; font-size: 1.3rem; line-height: 1.25; }
+
+        /* ---------- Botón flotante de WhatsApp ---------- */
+        .flota {
+            position: fixed; right: 16px; bottom: 16px; z-index: 60;
+            display: inline-flex; align-items: center; gap: 9px;
+            background: var(--wa); color: #fff; font-weight: 700; text-decoration: none;
+            padding: 13px 19px; border-radius: 999px;
+            box-shadow: 0 10px 28px rgba(18, 146, 74, .45);
+            transition: background .2s, transform .15s;
+        }
+        .flota:hover { background: var(--wa-hover); transform: translateY(-2px); }
+        .flota svg { width: 22px; height: 22px; flex: none; }
+
         footer { background: var(--tinta); color: #dfe5f7; padding: 44px 0; }
         footer .wrap { display: grid; gap: 8px; }
         footer .logo { color: #fff; font-size: 1.3rem; }
@@ -279,6 +313,7 @@
         footer a { text-decoration: underline; text-underline-offset: 3px; }
         footer a:hover { color: #fff; }
         footer small { color: #aab4d4; }
+        footer { padding-bottom: 88px; }
 
         /* ---------- Móvil ---------- */
         @media (max-width: 900px) {
@@ -306,6 +341,8 @@
             .tabla .grupo td::before { content: none; }
         }
         @media (max-width: 480px) {
+            .flota { padding: 0; width: 56px; height: 56px; justify-content: center; font-size: 0; }
+            .flota svg { width: 28px; height: 28px; }
             .calc { padding: 18px; }
             .hechos dt { flex-basis: 7.5rem; }
         }
@@ -391,6 +428,19 @@
         </section>
 
         <!-- ================= TASAS ================= -->
+        <section class="banda" id="banda" hidden>
+            <div class="wrap">
+                <div class="banda-fila">
+                    <div class="banda-txt">
+                        <strong>Más envías, mejor tasa</strong>
+                        <span>Con montos grandes aplicamos una tasa preferencial. Esto es lo que tenemos hoy:</span>
+                    </div>
+                    <a class="banda-btn" href="#tasas">Ver todas las tasas</a>
+                </div>
+                <ul class="banda-chips" id="banda-chips"></ul>
+            </div>
+        </section>
+
         <section class="bloque blanco" id="tasas">
             <div class="wrap">
                 <h2>Tasas de hoy</h2>
@@ -599,6 +649,11 @@
             </div>
         </section>
     </main>
+
+    <a class="flota" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)" aria-label="Escribir por WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-8l-5 4v-4H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/></svg>
+        WhatsApp
+    </a>
 
     <footer>
         <div class="wrap">
@@ -938,6 +993,28 @@
             }
         }
 
+
+        // ============================================================
+        // BANDA DE INCENTIVO (sale de las tasas con incentivo)
+        // ============================================================
+        function pintarBanda() {
+            const ul = $('banda-chips');
+            ul.innerHTML = '';
+            const con = DATA.productos.filter((p) => p.descuento != null && p.descuentoDesde != null);
+            $('banda').hidden = con.length === 0;
+            con.forEach((p) => {
+                const m = meta(p);
+                const li = document.createElement('li'); li.className = 'chip';
+                const a = document.createElement('small'); a.textContent = m.label;
+                const b = document.createElement('b');
+                b.textContent = m.cur === 'CUP' ? tasa2(p.descuento) + ' CUP' : tasa2(p.descuento) + ' MXN';
+                const c = document.createElement('small');
+                c.textContent = 'por ' + (m.cur === 'CUP' ? 'MXN' : m.cur) + ', desde ' + dinero(p.descuentoDesde) + ' ' + (p.descuentoUnidad || 'MXN');
+                li.appendChild(a); li.appendChild(b); li.appendChild(c);
+                ul.appendChild(li);
+            });
+        }
+
         // ============================================================
         // COBERTURA DE EFECTIVO
         // ============================================================
@@ -977,10 +1054,12 @@
             $('calc-suspendido').hidden = hay;
             $('tasas').hidden = !hay;
 
+            $('banda').hidden = !hay;
             if (!hay) { pintarCobertura(); return; }
 
             llenarSelect(actual && actual.id);
             pintarTabla();
+            pintarBanda();
             pintarCobertura();
             pintar('mxn');
         }
