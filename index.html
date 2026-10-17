@@ -211,20 +211,6 @@
         .num { font-family: var(--display); font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
         .sin { color: var(--suave); }
 
-        /* ---------- Promo ---------- */
-        .promo-in { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .promo-in img {
-            width: 100%; max-width: 720px; height: auto; border-radius: 16px;
-            border: 1px solid var(--linea);
-        }
-        .btn-azul {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: var(--azul); color: #fff; font: 700 1rem var(--texto);
-            border: 0; border-radius: 999px; padding: 13px 26px; cursor: pointer; text-decoration: none;
-            transition: background .2s;
-        }
-        .btn-azul:hover { background: #163490; }
-
         /* ---------- Efectivo ---------- */
         .efe { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 44px; margin-top: 28px; }
         .pasos { list-style: none; counter-reset: paso; display: grid; gap: 20px; align-content: start; }
@@ -424,14 +410,6 @@
             </div>
         </section>
 
-        <!-- ================= PROMO DÓLARES ================= -->
-        <section class="bloque" id="promo-usd" hidden>
-            <div class="wrap promo-in">
-                <img src="banner-navidad.jpg" width="1408" height="768" loading="lazy"
-                     alt="Dólares directos a Cuba: tarjetas Clásica y Bandec Prepago. REMEXCUB">
-                <button type="button" class="btn-azul" id="btn-cotizar-usd">Cotizar dólares</button>
-            </div>
-        </section>
 
         <!-- ================= EFECTIVO ================= -->
         <section class="bloque blanco" id="efectivo" hidden>
@@ -989,7 +967,6 @@
             $('calc-form').hidden = !hay;
             $('calc-suspendido').hidden = hay;
             $('tasas').hidden = !hay;
-            $('promo-usd').hidden = !DATA.productos.some((p) => p.categoria === 'tarjeta' && meta(p).cur === 'USD');
 
             if (!hay) { pintarCobertura(); return; }
 
@@ -1038,17 +1015,6 @@
         $('recibe').addEventListener('input', () => pintar('recibe'));
         $('mxn').addEventListener('blur', () => { const n = leer($('mxn').value); if (n > 0) $('mxn').value = dinero(n); });
         $('recibe').addEventListener('blur', () => pintar('mxn'));
-
-        $('btn-cotizar-usd').addEventListener('click', () => {
-            const p = DATA.productos.find((x) => x.categoria === 'tarjeta' && meta(x).cur === 'USD');
-            if (!p) return;
-            $('producto').value = p.id;
-            actual = p;
-            const mxn = leer($('mxn').value);
-            if (p.min != null && mxn < p.min) $('mxn').value = dinero(Math.ceil(p.min));
-            pintar('mxn');
-            $('calculadora').scrollIntoView({ behavior: 'smooth' });
-        });
 
         // Preguntas frecuentes por tema
         function mostrarTema(cat) {
