@@ -186,10 +186,7 @@
         .nota-cta { text-align: center; font-size: .85rem; color: var(--suave); margin-top: 10px; }
 
         /* ---------- Pago en USDT ---------- */
-        .usdt-box { margin-top: 14px; padding: 14px; border: 1.5px solid var(--azul); border-radius: 12px; background: var(--papel); }
-        .usdt-box p { font-size: .92rem; color: var(--suave); }
-        .usdt-box .usdt-monto { font: 700 1.15rem var(--display); color: var(--tinta); margin-bottom: 6px; }
-        .usdt-box .usdt-monto strong { font-size: 1.5rem; }
+        .usdt-nota { margin-top: 10px; font-size: .92rem; color: var(--suave); }
         .aviso-prueba { background: var(--oro-suave); color: var(--oro-texto); text-align: center; padding: 8px 12px; font-weight: 700; font-size: .9rem; }
 
         .suspendido { text-align: center; padding: 20px 4px; }
@@ -395,11 +392,19 @@
                             <select id="producto" class="sel"></select>
                         </div>
 
+                        <div class="campo" id="campo-pago" hidden>
+                            <label for="pago">Pagas con</label>
+                            <select id="pago" class="sel">
+                                <option value="MXN">Pesos mexicanos (MXN)</option>
+                                <option value="USDT">USDT (cripto)</option>
+                            </select>
+                        </div>
+
                         <div class="campo">
-                            <label for="mxn">Envías desde México</label>
+                            <label for="mxn" id="lbl-mxn">Envías desde México</label>
                             <div class="monto">
                                 <input id="mxn" type="text" inputmode="decimal" autocomplete="off" value="1000" aria-describedby="info">
-                                <span class="moneda">MXN</span>
+                                <span class="moneda" id="mxn-moneda">MXN</span>
                             </div>
                         </div>
 
@@ -411,25 +416,13 @@
                             </div>
                         </div>
 
-                        <div class="campo" id="campo-pago" hidden>
-                            <label for="pago">Pagas con</label>
-                            <select id="pago" class="sel">
-                                <option value="MXN">Pesos mexicanos (MXN)</option>
-                                <option value="USDT">USDT (cripto)</option>
-                            </select>
-                        </div>
-
                         <div class="tasa" aria-live="polite">
                             <span id="tasa-texto">Cargando tasas…</span>
                             <span class="tag" id="tag-incentivo" hidden>Incentivo aplicado</span>
                         </div>
 
                         <p class="info" id="info" aria-live="polite"></p>
-
-                        <div class="usdt-box" id="usdt-box" hidden>
-                            <p class="usdt-monto">Envías <strong id="usdt-monto">0</strong> USDT</p>
-                            <p>Escríbenos por WhatsApp y te damos la dirección y la red para enviarlo.</p>
-                        </div>
+                        <p class="usdt-nota" id="usdt-nota" hidden>Escríbenos por WhatsApp y te damos la dirección y la red para enviar los USDT.</p>
 
                         <a class="btn-wa cta" id="cta" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)">Enviar por WhatsApp</a>
                         <p class="nota-cta">Atención todos los días, de 9:00 am a 8:00 pm (hora de Monterrey)</p>
@@ -757,6 +750,10 @@
         const nf2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const dinero = (v) => (Math.abs(v - Math.round(v)) < 1e-9 ? nf0.format(Math.round(v)) : nf2.format(v));
         const tasa2 = (v) => nf2.format(v);
+        const nf4 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+        // Pago en USDT: la opción solo existe si el Cotizador manda "usdtCosto" (MXN por 1 USDT).
+        const enUSDT = () => !!USDT_COSTO && $('pago').value === 'USDT';
+        const aUSDT = (mxn, k) => Math.ceil(mxn / k * 100 - 1e-6) / 100;   // pesos -> USDT, hacia arriba a 2 decimales
         const leer = (s) => { const n = parseFloat(String(s).replace(/[^\d.]/g, '')); return isNaN(n) ? 0 : n; };
 
         function meta(p) {
@@ -776,6 +773,7 @@
         let EN_VIVO = false;
         let actual = null;     // producto elegido
         let USDT_COSTO = null; // MXN por 1 USDT; null = no se acepta USDT
+        let COSTO_PREVIO = null;
 
         // ============================================================
         // CÁLCULO
@@ -848,23 +846,37 @@
 
             $('recibe-moneda').textContent = m.cur;
 
-            let mxn = leer(mxnIn.value);
+            const k = enUSDT() ? USDT_COSTO : 0;
+            $('usdt-nota').hidden = !k;
+            $('lbl-mxn').textContent = k ? 'Envías en USDT' : 'Envías desde México';
+            $('mxn-moneda').textContent = k ? 'USDT' : 'MXN';
+
+            let mxn = leer(mxnIn.value) * (k || 1);       // lo escrito, convertido a pesos para cotizar
             if (origen === 'recibe') {
                 mxn = pesosNecesarios(p, leer(recIn.value));
-                mxnIn.value = mxn > 0 ? dinero(mxn) : '';
+                if (k) {
+                    const u = aUSDT(mxn, k);
+                    mxnIn.value = u > 0 ? nf2.format(u) : '';
+                    mxn = u * k;
+                } else {
+                    mxnIn.value = mxn > 0 ? dinero(mxn) : '';
+                }
             }
 
             tag.hidden = true;
-            $('usdt-box').hidden = true;
             info.textContent = '';
             $('cta').href = linkWA(MENSAJE_BASE);
 
             // Línea de tasa
             const q = mxn > 0 ? cotizar(p, mxn) : null;
             const tasaMostrada = q ? q.tasa : p.normal;
-            $('tasa-texto').textContent = m.cur === 'CUP'
-                ? '1 MXN = ' + tasa2(tasaMostrada) + ' CUP'
-                : '1 ' + m.cur + ' = ' + tasa2(tasaMostrada) + ' MXN';
+            $('tasa-texto').textContent = k
+                ? (m.cur === 'CUP'
+                    ? '1 USDT = ' + nf2.format(tasaMostrada * k) + ' CUP'
+                    : '1 ' + m.cur + ' = ' + nf4.format(tasaMostrada / k) + ' USDT')
+                : (m.cur === 'CUP'
+                    ? '1 MXN = ' + tasa2(tasaMostrada) + ' CUP'
+                    : '1 ' + m.cur + ' = ' + tasa2(tasaMostrada) + ' MXN');
 
             if (!(mxn > 0)) {
                 if (origen !== 'recibe') recIn.value = '';
@@ -877,27 +889,22 @@
             if (p.min != null && mxn < p.min) {
                 const span = document.createElement('span');
                 span.className = 'alerta';
-                span.textContent = 'El mínimo para ' + m.label + ' es de ' + dinero(Math.ceil(p.min)) + ' MXN.';
+                span.textContent = 'El mínimo para ' + m.label + ' es de ' +
+                    (k ? nf2.format(aUSDT(p.min, k)) + ' USDT.' : dinero(Math.ceil(p.min)) + ' MXN.');
                 info.appendChild(span);
                 return;
             }
 
             if (q.recibe <= 0) return;
 
-            // Pago en USDT: pesos de la cotización / costo del USDT, redondeado hacia arriba a 2 decimales
-            const pagaUSDT = USDT_COSTO && $('pago').value === 'USDT';
-            const usdt = pagaUSDT ? Math.ceil(q.paga / USDT_COSTO * 100 - 1e-6) / 100 : 0;
+            // Pago en USDT: lo que cuestan los pesos de la cotización, hacia arriba a 2 decimales
+            const usdt = k ? aUSDT(q.paga, k) : 0;
 
             // Mensaje de WhatsApp con la cotización
-            $('cta').href = linkWA(pagaUSDT
-                ? 'Hola, quiero enviar a Cuba (' + m.label + ') pagando con USDT: ' + nf2.format(usdt) + ' USDT (equivale a ' + dinero(q.paga) + ' MXN). Recibirían ' + textoRecibe(p, q.recibe) + '.'
+            $('cta').href = linkWA(k
+                ? 'Hola, quiero enviar a Cuba (' + m.label + ') pagando con USDT: ' + nf2.format(usdt) + ' USDT. Recibirían ' + textoRecibe(p, q.recibe) + '.'
                 : 'Hola, quiero enviar ' + dinero(q.paga) + ' MXN a Cuba (' + m.label + '). Recibirían ' + textoRecibe(p, q.recibe) + '.'
             );
-
-            if (pagaUSDT) {
-                $('usdt-monto').textContent = nf2.format(usdt);
-                $('usdt-box').hidden = false;
-            }
 
             // Incentivo aplicado / por alcanzar
             if (q.incentivo) {
@@ -914,15 +921,22 @@
             } else if (p.descuento != null) {
                 const unidad = p.descuentoUnidad || 'MXN';
                 const s = document.createElement('span');
-                s.textContent = 'Desde ' + dinero(p.descuentoDesde) + ' ' + unidad + ' la tasa mejora a ' +
-                    tasa2(p.descuento) + (m.cur === 'CUP' ? ' CUP por MXN.' : ' MXN por ' + m.cur + '.');
+                if (k) {
+                    const desde = unidad === 'MXN' ? nf2.format(aUSDT(p.descuentoDesde, k)) + ' USDT' : dinero(p.descuentoDesde) + ' ' + unidad;
+                    s.textContent = 'Desde ' + desde + ' la tasa mejora a ' +
+                        (m.cur === 'CUP' ? nf2.format(p.descuento * k) + ' CUP por USDT.' : nf4.format(p.descuento / k) + ' USDT por ' + m.cur + '.');
+                } else {
+                    s.textContent = 'Desde ' + dinero(p.descuentoDesde) + ' ' + unidad + ' la tasa mejora a ' +
+                        tasa2(p.descuento) + (m.cur === 'CUP' ? ' CUP por MXN.' : ' MXN por ' + m.cur + '.');
+                }
                 info.appendChild(s);
             }
 
             // Billetes de 50
             if (esEfectivoUSD(p) && Math.abs(q.paga - mxn) > 0.004) {
                 const s = document.createElement('div');
-                s.textContent = 'Se entrega en billetes de 50 USD: ' + nf0.format(q.recibe) + ' USD por ' + dinero(q.paga) + ' MXN.';
+                s.textContent = 'Se entrega en billetes de 50 USD: ' + nf0.format(q.recibe) + ' USD por ' +
+                    (k ? nf2.format(usdt) + ' USDT.' : dinero(q.paga) + ' MXN.');
                 info.appendChild(s);
             }
         }
@@ -1087,10 +1101,17 @@
             DATA = datos;
             EN_VIVO = enVivo;
 
+            COSTO_PREVIO = USDT_COSTO;
             USDT_COSTO = (enVivo && typeof datos.usdtCosto === 'number' && datos.usdtCosto > 0) ? datos.usdtCosto : null;
+            if (!USDT_COSTO && $('pago').value === 'USDT') {
+                // Si se cae el costo USDT con el cliente en USDT, regresa a MXN y convierte lo escrito
+                const n = leer($('mxn').value);
+                if (n > 0 && COSTO_PREVIO) $('mxn').value = dinero(Math.round(n * COSTO_PREVIO));
+                $('pago').value = 'MXN';
+                modoPago = 'MXN';
+            }
             $('campo-pago').hidden = !USDT_COSTO;
             $('metodo-usdt').hidden = !USDT_COSTO;
-            if (!USDT_COSTO) $('pago').value = 'MXN';
 
             const hay = DATA.productos.length > 0;
             $('calc-form').hidden = !hay;
@@ -1138,15 +1159,26 @@
         // ============================================================
         $('producto').addEventListener('change', () => {
             actual = DATA.productos.find((p) => p.id === $('producto').value);
-            const mxn = leer($('mxn').value);
-            if (actual && actual.min != null && mxn < actual.min) $('mxn').value = dinero(Math.ceil(actual.min));
+            const k = enUSDT() ? USDT_COSTO : 0;
+            const mxn = leer($('mxn').value) * (k || 1);
+            if (actual && actual.min != null && mxn < actual.min) $('mxn').value = k ? nf2.format(aUSDT(actual.min, k)) : dinero(Math.ceil(actual.min));
             pintar('mxn');
         });
         $('mxn').addEventListener('input', () => pintar('mxn'));
         $('recibe').addEventListener('input', () => pintar('recibe'));
-        $('mxn').addEventListener('blur', () => { const n = leer($('mxn').value); if (n > 0) $('mxn').value = dinero(n); });
+        $('mxn').addEventListener('blur', () => { const n = leer($('mxn').value); if (n > 0) $('mxn').value = enUSDT() ? nf2.format(n) : dinero(n); });
         $('recibe').addEventListener('blur', () => pintar('mxn'));
-        $('pago').addEventListener('change', () => pintar('mxn'));
+        // Al cambiar "Pagas con", el monto escrito se convierte para que siga valiendo lo mismo
+        let modoPago = 'MXN';
+        $('pago').addEventListener('change', () => {
+            const nuevo = $('pago').value;
+            const n = leer($('mxn').value);
+            if (nuevo !== modoPago && n > 0 && USDT_COSTO) {
+                $('mxn').value = nuevo === 'USDT' ? nf2.format(aUSDT(n, USDT_COSTO)) : dinero(Math.round(n * USDT_COSTO));
+            }
+            modoPago = nuevo;
+            pintar('mxn');
+        });
 
         // Preguntas frecuentes por tema
         function mostrarTema(cat) {
