@@ -772,57 +772,67 @@
         let actual = null;     // producto elegido
         let USDT_COSTO = null; // MXN por 1 USDT; null = no se acepta USDT
         let COSTO_PREVIO = null;
+        let modo = 'mxn';      // lo último que escribió el cliente: los pesos ('mxn') o cuánto quiere recibir ('recibe')
 
         // ============================================================
         // CÁLCULO
         // ============================================================
-        function elegirTasa(p, mxn) {
-            if (p.descuento == null) return { tasa: p.normal, incentivo: false };
-            const cur = meta(p).cur;
-            let aplica;
-            if (p.descuentoUnidad === 'MXN') aplica = mxn >= p.descuentoDesde;
-            else aplica = cur === 'CUP' ? (mxn * p.descuento >= p.descuentoDesde) : (mxn / p.descuento >= p.descuentoDesde);
-            return { tasa: aplica ? p.descuento : p.normal, incentivo: aplica };
-        }
+        // >>> REGLA ÚNICA (inicio): la misma que usa Vanessa en calculos.js. Las dos deben dar lo mismo.
+        // Lo que se PAGA va en pesos enteros hacia arriba; lo que se RECIBE se recorta hacia abajo
+        // (CUP entero; USD y MLC a 2 decimales). "Desde X" incluye el número X.
+        const EPS = 1e-9;
+        const abajoN = (x, dec = 0) => Math.floor(x * Math.pow(10, dec) + EPS) / Math.pow(10, dec);
+        const arribaN = (x) => Math.ceil(x - EPS);
 
-        // Pesos que envías -> lo que reciben
+        // El cliente da PESOS -> lo que recibe
         function cotizar(p, mxn) {
             const cur = meta(p).cur;
-            const { tasa, incentivo } = elegirTasa(p, mxn);
-            let recibe, paga = mxn;
+            const desc = p.descuento != null ? p.descuento : null;
+            let tasa = p.normal, incentivo = false;
             if (cur === 'CUP') {
-                recibe = Math.round(mxn * tasa);
-            } else if (esEfectivoUSD(p)) {
-                recibe = Math.floor(mxn / tasa / PASO_USD_EFECTIVO + 1e-9) * PASO_USD_EFECTIVO;
-                paga = Math.round(recibe * tasa * 100) / 100;
-            } else {
-                recibe = Math.floor(mxn / tasa * 100 + 1e-6) / 100;
+                // CUP: el incentivo se decide por los pesos
+                if (desc && mxn >= p.descuentoDesde) { tasa = desc; incentivo = true; }
+                return { recibe: abajoN(mxn * tasa), tasa, incentivo, paga: mxn };
             }
-            return { recibe, tasa, incentivo, paga };
+            if (esEfectivoUSD(p)) {
+                // USD en efectivo: billetes de 50. Se decide con la tasa de INCENTIVO.
+                const aPaso = (x) => Math.floor(x / PASO_USD_EFECTIVO + EPS) * PASO_USD_EFECTIVO;
+                const conInc = desc ? aPaso(mxn / desc) : 0;
+                let recibe;
+                if (desc && conInc >= p.descuentoDesde) { tasa = desc; incentivo = true; recibe = conInc; }
+                else recibe = aPaso(mxn / p.normal);
+                return { recibe, tasa, incentivo, paga: arribaN(recibe * tasa) };
+            }
+            // USD tarjeta y MLC: se decide con la tasa de INCENTIVO
+            if (desc && mxn / desc + EPS >= p.descuentoDesde) { tasa = desc; incentivo = true; }
+            return { recibe: abajoN(mxn / tasa, 2), tasa, incentivo, paga: mxn };
         }
 
-        // Lo que quieren que reciban -> pesos que envías
-        function pesosNecesarios(p, recibe) {
+        // El cliente dice cuánto quiere RECIBIR -> lo que paga. En USD efectivo, si no es múltiplo de 50,
+        // devuelve { opciones } con los dos vecinos.
+        function cotizarRecibir(p, quiere) {
             const cur = meta(p).cur;
+            const desc = p.descuento != null ? p.descuento : null;
             if (cur === 'CUP') {
-                let mxn = recibe / p.normal;
-                if (p.descuento != null) {
-                    const conInc = recibe / p.descuento;
-                    const aplica = p.descuentoUnidad === 'MXN' ? conInc >= p.descuentoDesde : recibe >= p.descuentoDesde;
-                    if (aplica) mxn = conInc;
+                const costoNormal = arribaN(quiere / p.normal);
+                if (desc && costoNormal >= p.descuentoDesde) {      // a tasa normal ya llegaría al umbral: incentivo
+                    let mxn = arribaN(quiere / desc);
+                    const piso = mxn < p.descuentoDesde;            // piso del incentivo: se cobra como mínimo el umbral
+                    if (piso) mxn = p.descuentoDesde;
+                    return { paga: mxn, recibe: piso ? abajoN(mxn * desc) : quiere, tasa: desc, incentivo: true };
                 }
-                return Math.ceil(mxn);
+                return { paga: costoNormal, recibe: quiere, tasa: p.normal, incentivo: false };
             }
-            const unidades = esEfectivoUSD(p)
-                ? Math.max(PASO_USD_EFECTIVO, Math.round(recibe / PASO_USD_EFECTIVO) * PASO_USD_EFECTIVO)
-                : recibe;
-            let precio = p.normal;
-            if (p.descuento != null) {
-                const aplica = p.descuentoUnidad === 'MXN' ? unidades * p.descuento >= p.descuentoDesde : unidades >= p.descuentoDesde;
-                if (aplica) precio = p.descuento;
+            if (esEfectivoUSD(p) && quiere % PASO_USD_EFECTIVO !== 0) {
+                const bajo = Math.floor(quiere / PASO_USD_EFECTIVO) * PASO_USD_EFECTIVO;
+                const alto = bajo + PASO_USD_EFECTIVO;
+                return { opciones: [bajo, alto].filter((u) => u >= PASO_USD_EFECTIVO).map((u) => cotizarRecibir(p, u)) };
             }
-            return Math.ceil(unidades * precio * 100) / 100;
+            const incentivo = !!desc && quiere >= p.descuentoDesde;
+            const tasa = incentivo ? desc : p.normal;
+            return { paga: arribaN(quiere * tasa), recibe: quiere, tasa, incentivo };
         }
+        // <<< REGLA ÚNICA (fin)
 
         // ============================================================
         // CALCULADORA (pantalla)
@@ -850,15 +860,15 @@
             $('mxn-moneda').textContent = k ? 'USDT' : 'MXN';
 
             let mxn = leer(mxnIn.value) * (k || 1);       // lo escrito, convertido a pesos para cotizar
+            let rev = null;                                // cotización de "cuánto quieren recibir", si es el caso
+            let opciones = null;                           // USD en efectivo: monto que no es múltiplo de 50
             if (origen === 'recibe') {
-                mxn = pesosNecesarios(p, leer(recIn.value));
-                if (k) {
-                    const u = aUSDT(mxn, k);
-                    mxnIn.value = u > 0 ? nf2.format(u) : '';
-                    mxn = u * k;
-                } else {
-                    mxnIn.value = mxn > 0 ? dinero(mxn) : '';
-                }
+                const quiere = leer(recIn.value);
+                rev = quiere > 0 ? cotizarRecibir(p, quiere) : null;
+                if (rev && rev.opciones) { opciones = rev.opciones; rev = null; }
+                mxn = rev ? rev.paga : 0;
+                if (k && rev) mxnIn.value = rev.paga > 0 ? nf2.format(aUSDT(rev.paga, k)) : '';
+                else mxnIn.value = mxn > 0 ? dinero(mxn) : '';
             }
 
             tag.hidden = true;
@@ -867,6 +877,7 @@
 
             // Línea de tasa
             const q = mxn > 0 ? cotizar(p, mxn) : null;
+            if (q && rev) { q.paga = rev.paga; q.recibe = rev.recibe; q.tasa = rev.tasa; q.incentivo = rev.incentivo; }
             const tasaMostrada = q ? q.tasa : p.normal;
             $('tasa-texto').textContent = k
                 ? (m.cur === 'CUP'
@@ -875,6 +886,13 @@
                 : (m.cur === 'CUP'
                     ? '1 MXN = ' + tasa2(tasaMostrada) + ' CUP'
                     : '1 ' + m.cur + ' = ' + tasa2(tasaMostrada) + ' MXN');
+
+            if (opciones) {
+                const s = document.createElement('span');
+                s.textContent = 'Se entrega en billetes de 50 USD. Para ' + nf0.format(leer(recIn.value)) + ' USD tienes dos opciones: ' +
+                    opciones.map((o) => nf0.format(o.recibe) + ' USD por ' + (k ? nf2.format(aUSDT(o.paga, k)) + ' USDT' : dinero(o.paga) + ' MXN')).join(' o ') + '.';
+                info.appendChild(s);
+            }
 
             if (!(mxn > 0)) {
                 if (origen !== 'recibe') recIn.value = '';
@@ -1123,7 +1141,7 @@
             pintarTabla();
             pintarBanda();
             pintarCobertura();
-            pintar('mxn');
+            pintar(modo);
         }
 
         function datosValidos(d) {
@@ -1160,12 +1178,13 @@
             const k = enUSDT() ? USDT_COSTO : 0;
             const mxn = leer($('mxn').value) * (k || 1);
             if (actual && actual.min != null && mxn < actual.min) $('mxn').value = k ? nf2.format(aUSDT(actual.min, k)) : dinero(Math.ceil(actual.min));
+            modo = 'mxn';
             pintar('mxn');
         });
-        $('mxn').addEventListener('input', () => pintar('mxn'));
-        $('recibe').addEventListener('input', () => pintar('recibe'));
+        $('mxn').addEventListener('input', () => { modo = 'mxn'; pintar('mxn'); });
+        $('recibe').addEventListener('input', () => { modo = 'recibe'; pintar('recibe'); });
         $('mxn').addEventListener('blur', () => { const n = leer($('mxn').value); if (n > 0) $('mxn').value = enUSDT() ? nf2.format(n) : dinero(n); });
-        $('recibe').addEventListener('blur', () => pintar('mxn'));
+        $('recibe').addEventListener('blur', () => pintar(modo));
         // Al cambiar "Pagas con", el monto escrito se convierte para que siga valiendo lo mismo
         let modoPago = 'MXN';
         $('pago').addEventListener('change', () => {
@@ -1175,6 +1194,7 @@
                 $('mxn').value = nuevo === 'USDT' ? nf2.format(aUSDT(n, USDT_COSTO)) : dinero(Math.round(n * USDT_COSTO));
             }
             modoPago = nuevo;
+            modo = 'mxn';
             pintar('mxn');
         });
 
