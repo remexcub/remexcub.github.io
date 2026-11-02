@@ -394,7 +394,7 @@
                             <label for="pago">Pagas con</label>
                             <select id="pago" class="sel">
                                 <option value="MXN">Pesos mexicanos (MXN)</option>
-                                <option value="USDT">USDT (cripto)</option>
+                                <option value="USDT">USDT (BEP20)</option>
                             </select>
                         </div>
 
@@ -420,7 +420,7 @@
                         </div>
 
                         <p class="info" id="info" aria-live="polite"></p>
-                        <p class="usdt-nota" id="usdt-nota" hidden>Escríbenos por WhatsApp y te damos la dirección y la red para enviar los USDT.</p>
+                        <p class="usdt-nota" id="usdt-nota" hidden>Escríbenos por WhatsApp y te damos la dirección para enviar los USDT (BEP20).</p>
 
                         <a class="btn-wa cta" id="cta" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)">Enviar por WhatsApp</a>
                         <p class="nota-cta">Atención todos los días, de 9:00 am a 8:00 pm (hora de Monterrey)</p>
@@ -528,7 +528,7 @@
                         <p>En cualquier sucursal.</p>
                     </div>
                     <div class="metodo" id="metodo-usdt" hidden>
-                        <h3>USDT (cripto)</h3>
+                        <h3>USDT (BEP20)</h3>
                         <p>Paga con USDT. Elígelo en la calculadora, en "Pagas con", y te damos los datos por WhatsApp.</p>
                     </div>
                     <div class="metodo">
@@ -856,7 +856,7 @@
 
             const k = enUSDT() ? USDT_COSTO : 0;
             $('usdt-nota').hidden = !k;
-            $('lbl-mxn').textContent = k ? 'Envías en USDT' : 'Envías desde México';
+            $('lbl-mxn').textContent = k ? 'Envías en USDT (BEP20)' : 'Envías desde México';
             $('mxn-moneda').textContent = k ? 'USDT' : 'MXN';
 
             let mxn = leer(mxnIn.value) * (k || 1);       // lo escrito, convertido a pesos para cotizar
@@ -918,7 +918,7 @@
 
             // Mensaje de WhatsApp con la cotización
             $('cta').href = linkWA(k
-                ? 'Hola, quiero enviar a Cuba (' + m.label + ') pagando con USDT: ' + nf2.format(usdt) + ' USDT. Recibirían ' + textoRecibe(p, q.recibe) + '.'
+                ? 'Hola, quiero enviar a Cuba (' + m.label + ') pagando con USDT (BEP20): ' + nf2.format(usdt) + ' USDT. Recibirían ' + textoRecibe(p, q.recibe) + '.'
                 : 'Hola, quiero enviar ' + dinero(q.paga) + ' MXN a Cuba (' + m.label + '). Recibirían ' + textoRecibe(p, q.recibe) + '.'
             );
 
