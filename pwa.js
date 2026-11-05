@@ -1,4 +1,4 @@
-/* REMEXCUB · app instalable (PWA): botón "Instalar app" + conteo de instalaciones y aperturas. */
+/* REMEXCUB · app instalable (PWA): botón "Descargar la app" + conteo de instalaciones y aperturas. */
 (function () {
     'use strict';
 
@@ -48,18 +48,18 @@
         return; // ya está dentro de la app: no mostrar botón de instalar
     }
 
-    // Botón "Instalar app" (solo cuando el navegador permite instalar)
+    // Botón "Descargar la app" (solo cuando el navegador permite instalar)
     var evento = null, boton = null, caja = null;
 
     function crearBoton() {
         if (boton) return;
         boton = document.createElement('button');
         boton.type = 'button';
-        boton.textContent = '📲 Instalar app';
-        boton.setAttribute('aria-label', 'Instalar la app de REMEXCUB');
-        boton.style.cssText = 'background:#10204d;color:#fff;border:2px solid #e2b53c;border-radius:999px;' +
-            'padding:9px 16px;font:700 .9rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;' +
-            'box-shadow:0 6px 18px rgba(16,32,77,.3)';
+        boton.textContent = '📲 Descargar la app';
+        boton.setAttribute('aria-label', 'Descargar la app de REMEXCUB');
+        boton.style.cssText = 'background:#1c3faa;color:#fff;border:0;border-radius:999px;' +
+            'padding:8px 15px;font:700 .85rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;' +
+            'box-shadow:0 2px 8px rgba(28,63,170,.25)';
         boton.addEventListener('click', function () {
             if (!evento) return;
             registrar('clic_instalar');
