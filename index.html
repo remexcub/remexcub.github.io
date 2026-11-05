@@ -388,6 +388,10 @@
             .tabla td.prod { display: block; padding-bottom: 6px; }
             .tabla td.prod::before { content: none; }
             .tabla td.der { text-align: right; }
+            /* El número va pegado a la derecha y el "desde…" debajo, también a la derecha */
+            .tabla td { flex-wrap: wrap; row-gap: 0; }
+            .tabla td > .num { margin-left: auto; }
+            .tabla td > small.sin { flex-basis: 100%; text-align: right; }
             .tabla .grupo td { display: block; padding: 10px 16px; }
             .tabla .grupo td::before { content: none; }
         }
