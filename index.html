@@ -388,10 +388,10 @@
             .tabla td.prod { display: block; padding-bottom: 6px; }
             .tabla td.prod::before { content: none; }
             .tabla td.der { text-align: right; }
-            /* El número va pegado a la derecha y el "desde…" debajo, también a la derecha */
-            .tabla td { flex-wrap: wrap; row-gap: 0; }
-            .tabla td > .num { margin-left: auto; }
-            .tabla td > small.sin { flex-basis: 100%; text-align: right; }
+            /* Etiqueta a la izquierda y el valor pegado a ella, todos alineados en una misma columna */
+            .tabla tr.fila td:not(.prod) { display: grid; grid-template-columns: 7.4rem 1fr; column-gap: 12px; row-gap: 0; align-items: baseline; justify-content: start; }
+            .tabla tr.fila td.der { text-align: left; }
+            .tabla tr.fila td > small.sin { grid-column: 2; }
             .tabla .grupo td { display: block; padding: 10px 16px; }
             .tabla .grupo td::before { content: none; }
         }
