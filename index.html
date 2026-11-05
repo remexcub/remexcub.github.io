@@ -42,6 +42,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
+    <!-- App instalable (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10204d">
+    <script>
+    /* Modo app: cuando se abre desde el ícono instalado (?source=app), se ocultan la intro y lo promocional. */
+    (function () {
+        if (/[?&]source=app\b/.test(location.search) ||
+            (window.matchMedia && matchMedia('(display-mode: standalone)').matches) ||
+            navigator.standalone === true) { document.documentElement.classList.add('app'); }
+    })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -387,6 +399,11 @@
             html { scroll-behavior: auto; }
             * { transition: none !important; }
         }
+
+        /* ---------- Modo app (solo si se abre desde la app instalada) ---------- */
+        html.app .hero .copy, html.app .hechos, html.app #banda, html.app header.top nav { display: none !important; }
+        html.app .hero { padding-top: 18px !important; }
+        html.app body { padding-bottom: 120px; }
     </style>
 </head>
 <body>
@@ -1316,5 +1333,6 @@
         setInterval(cargar, 60 * 1000);
     })();
     </script>
+    <script src="pwa.js" defer></script>
 </body>
 </html>
