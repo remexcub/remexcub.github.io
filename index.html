@@ -298,17 +298,52 @@
         .chip small { display: block; color: #d4e0ff; font-size: .82rem; font-weight: 600; }
         .chip b { display: block; font-family: var(--display); font-weight: 800; font-size: 1.3rem; line-height: 1.25; }
 
-        /* ---------- Botón flotante de WhatsApp ---------- */
-        .flota {
-            position: fixed; right: 16px; bottom: 16px; z-index: 60;
-            display: inline-flex; align-items: center; gap: 9px;
-            background: var(--wa); color: #fff; font-weight: 700; text-decoration: none;
-            padding: 13px 19px; border-radius: 999px;
-            box-shadow: 0 10px 28px rgba(18, 146, 74, .45);
-            transition: background .2s, transform .15s;
+        /* ---------- Wabi: botón flotante de WhatsApp ---------- */
+        .wabi {
+            position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60;
+            display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+            pointer-events: none;
         }
-        .flota:hover { background: var(--wa-hover); transform: translateY(-2px); }
-        .flota svg { width: 22px; height: 22px; flex: none; }
+        .wabi > a { pointer-events: auto; text-decoration: none; }
+        .wabi-globo {
+            position: relative; max-width: 230px;
+            background: #fff; color: var(--tinta); font-weight: 600; font-size: .95rem; line-height: 1.3;
+            padding: 10px 14px; border-radius: 16px 16px 4px 16px;
+            box-shadow: 0 8px 24px rgba(16, 32, 77, .22);
+            opacity: 0; transform: translateY(8px) scale(.96); visibility: hidden;
+            transition: opacity .25s, transform .25s, visibility .25s;
+        }
+        .wabi-globo b { color: var(--wa); }
+        .wabi.con-globo .wabi-globo { opacity: 1; transform: none; visibility: visible; }
+        .wabi-btn {
+            position: relative; display: block; width: 112px; height: 112px; border-radius: 50%;
+            border: 3px solid #e2b53c; background: var(--azul); overflow: visible;
+            box-shadow: 0 10px 28px rgba(16, 32, 77, .45);
+            transition: transform .15s;
+        }
+        .wabi-btn:hover { transform: translateY(-2px) scale(1.04); }
+        .wabi-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px var(--azul); }
+        .wabi-video {
+            position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%;
+            object-fit: cover; object-position: 50% 17%; background: var(--azul);
+        }
+        .wabi-pulgar { opacity: 0; transition: opacity .25s; }
+        .wabi.reacciona .wabi-pulgar { opacity: 1; }
+        .wabi-wa {
+            position: absolute; right: -4px; bottom: -2px; width: 34px; height: 34px; border-radius: 50%;
+            display: grid; place-items: center; background: var(--wa); color: #fff;
+            border: 2px solid #fff; box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+        }
+        .wabi-wa svg { width: 18px; height: 18px; }
+        @media (max-width: 520px) {
+            .wabi-btn { width: 92px; height: 92px; }
+            .wabi-wa { width: 30px; height: 30px; }
+            .wabi-globo { max-width: 200px; font-size: .9rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .wabi-btn, .wabi-globo, .wabi-pulgar { transition: none; }
+            .wabi-btn:hover { transform: none; }
+        }
 
         footer { background: var(--tinta); color: #dfe5f7; padding: 44px 0; }
         footer .wrap { display: grid; gap: 8px; }
@@ -345,8 +380,6 @@
             .tabla .grupo td::before { content: none; }
         }
         @media (max-width: 480px) {
-            .flota { padding: 0; width: 56px; height: 56px; justify-content: center; font-size: 0; }
-            .flota svg { width: 28px; height: 28px; }
             .calc { padding: 18px; }
             .hechos dt { flex-basis: 7.5rem; }
         }
@@ -667,10 +700,14 @@
         </section>
     </main>
 
-    <a class="flota" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)" aria-label="Escribir por WhatsApp">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-8l-5 4v-4H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/></svg>
-        WhatsApp
-    </a>
+    <div class="wabi" id="wabi">
+        <a class="wabi-globo" id="wabi-globo" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)" tabindex="-1">¡Hola! Soy Wabi 👋 <b>Escríbeme por WhatsApp</b></a>
+        <a class="wabi-btn" href="https://wa.me/528143005468?text=Hola,%20quiero%20enviar%20una%20remesa%20a%20Cuba" onclick="return clicWA(event, this)" aria-label="Escribir por WhatsApp con Wabi">
+            <video class="wabi-video" id="wabi-saludo" src="wabi/wabi-saludo.mp4" poster="wabi/wabi-poster.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+            <video class="wabi-video wabi-pulgar" id="wabi-pulgar" src="wabi/wabi-pulgar.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
+            <span class="wabi-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-8l-5 4v-4H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/></svg></span>
+        </a>
+    </div>
 
     <footer>
         <div class="wrap">
@@ -1216,6 +1253,61 @@
             if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button > 0) return true;
             return gtag_report_conversion(a.href);
         };
+
+        // ============================================================
+        // WABI: botón flotante de WhatsApp con reacciones
+        // ============================================================
+        (function () {
+            var wabi = $('wabi'), globo = $('wabi-globo'), saludo = $('wabi-saludo'), pulgar = $('wabi-pulgar');
+            if (!wabi || !globo || !saludo || !pulgar) return;
+            var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var tGlobo = null, tReaccion = null, ultimaReaccion = 0;
+
+            function mostrarGlobo(html, ms) {
+                globo.innerHTML = html;
+                wabi.classList.add('con-globo');
+                clearTimeout(tGlobo);
+                tGlobo = setTimeout(function () { wabi.classList.remove('con-globo'); }, ms);
+            }
+            function terminarReaccion() {
+                wabi.classList.remove('reacciona');
+                try { pulgar.pause(); } catch (e) {}
+            }
+
+            if (quieto) { try { saludo.pause(); } catch (e) {} }
+            else { var p = saludo.play(); if (p && p.catch) p.catch(function () {}); }
+
+            // Saludo inicial: a los 3 s sale el globo y se esconde solo.
+            setTimeout(function () {
+                mostrarGlobo('¡Hola! Soy Wabi 👋 <b>Escríbeme por WhatsApp</b>', 7000);
+            }, 3000);
+
+            // Reacción: cuando el cliente escribe un monto en la calculadora.
+            function reaccionar() {
+                var v = parseFloat(String($('mxn').value || '').replace(/,/g, ''));
+                if (!(v > 0)) return;
+                var ahora = Date.now();
+                if (ahora - ultimaReaccion < 20000) return;
+                ultimaReaccion = ahora;
+                // En celular el globo taparía la tasa: ahí solo reacciona Wabi (pulgar arriba).
+                if (window.matchMedia && window.matchMedia('(max-width: 520px)').matches) {
+                    clearTimeout(tGlobo); wabi.classList.remove('con-globo');
+                } else {
+                    mostrarGlobo('¡Listo! Envíalo por <b>WhatsApp</b> 🟢', 6000);
+                }
+                if (quieto) return;
+                try { pulgar.currentTime = 0; } catch (e) {}
+                wabi.classList.add('reacciona');
+                var q = pulgar.play(); if (q && q.catch) q.catch(terminarReaccion);
+                clearTimeout(tReaccion);
+                tReaccion = setTimeout(terminarReaccion, 4200);
+            }
+            pulgar.addEventListener('ended', terminarReaccion);
+            var tTecleo = null;
+            function alTeclear() { clearTimeout(tTecleo); tTecleo = setTimeout(reaccionar, 700); }
+            $('mxn').addEventListener('input', alTeclear);
+            $('recibe').addEventListener('input', alTeclear);
+        })();
 
         // ============================================================
         // ARRANQUE
