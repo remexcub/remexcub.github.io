@@ -4,7 +4,7 @@
 
     // URL (termina en /exec) de la implementación del Apps Script "instalaciones.gs".
     // Mientras esté vacía, los eventos solo se mandan a Google (gtag).
-    var TRACK_URL = '';
+    var TRACK_URL = 'https://script.google.com/macros/s/AKfycbwzb8e6UNSN8MMeBTfRGAUi9wHVsR3XbalQKJrX3FzP62UfjwbOqLVJOowsLUAfjIf70Q/exec';
 
     var esApp = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
                 window.navigator.standalone === true ||
