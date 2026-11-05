@@ -49,7 +49,7 @@
     }
 
     // Botón "Instalar app" (solo cuando el navegador permite instalar)
-    var evento = null, boton = null;
+    var evento = null, boton = null, caja = null;
 
     function crearBoton() {
         if (boton) return;
@@ -57,10 +57,9 @@
         boton.type = 'button';
         boton.textContent = '📲 Instalar app';
         boton.setAttribute('aria-label', 'Instalar la app de REMEXCUB');
-        boton.style.cssText = 'position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;' +
-            'background:#10204d;color:#fff;border:2px solid #e2b53c;border-radius:999px;padding:12px 18px;' +
-            'font:700 .95rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;' +
-            'box-shadow:0 10px 28px rgba(16,32,77,.4)';
+        boton.style.cssText = 'background:#10204d;color:#fff;border:2px solid #e2b53c;border-radius:999px;' +
+            'padding:9px 16px;font:700 .9rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;' +
+            'box-shadow:0 6px 18px rgba(16,32,77,.3)';
         boton.addEventListener('click', function () {
             if (!evento) return;
             registrar('clic_instalar');
@@ -68,10 +67,23 @@
             evento.userChoice.then(function (r) {
                 registrar(r && r.outcome === 'accepted' ? 'acepto' : 'rechazo');
                 evento = null;
-                if (boton) boton.style.display = 'none';
+                ocultarBoton();
             }).catch(function () {});
         });
-        document.body.appendChild(boton);
+
+        // Arriba a la izquierda, justo debajo del encabezado (debajo del logo), alineado con él.
+        // No es flotante: se va con la página, así no choca con Wabi.
+        caja = document.createElement('div');
+        caja.className = 'wrap';
+        caja.style.cssText = 'padding-top:10px;padding-bottom:0;text-align:left';
+        caja.appendChild(boton);
+        var enc = document.querySelector('header.top');
+        if (enc && enc.parentNode) enc.parentNode.insertBefore(caja, enc.nextSibling);
+        else document.body.insertBefore(caja, document.body.firstChild);
+    }
+
+    function ocultarBoton() {
+        if (caja) caja.style.display = 'none';
     }
 
     window.addEventListener('beforeinstallprompt', function (e) {
@@ -84,6 +96,6 @@
     window.addEventListener('appinstalled', function () {
         registrar('instalada');
         evento = null;
-        if (boton) boton.style.display = 'none';
+        ocultarBoton();
     });
 })();
