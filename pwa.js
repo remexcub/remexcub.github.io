@@ -94,7 +94,13 @@
     });
 
     window.addEventListener('appinstalled', function () {
-        registrar('instalada');
+        // Chrome a veces avisa dos veces: se cuenta una sola vez por equipo
+        try {
+            if (!localStorage.getItem('rmx_inst')) {
+                localStorage.setItem('rmx_inst', '1');
+                registrar('instalada');
+            }
+        } catch (e) { registrar('instalada'); }
         evento = null;
         ocultarBoton();
     });
