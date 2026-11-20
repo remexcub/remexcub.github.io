@@ -535,7 +535,7 @@
         <section class="bloque blanco" id="efectivo" hidden>
             <div class="wrap">
                 <h2>Efectivo a domicilio en Cuba</h2>
-                <p class="sub">Dólares en billetes de 50, que se entregan en múltiplos de 50 USD (100, 150, 200…), o pesos cubanos en efectivo. Sin monto máximo.</p>
+                <p class="sub">Dólares en efectivo en múltiplos de 10 USD (50, 60, 70…), o pesos cubanos en efectivo. Sin monto máximo.</p>
 
                 <div class="efe">
                     <ol class="pasos">
@@ -683,7 +683,7 @@
                     <details data-cat="efectivo" hidden>
                         <summary>¿Cómo funciona el envío en efectivo?</summary>
                         <div class="resp">
-                            <p>Entregamos dólares en billetes de 50 (en múltiplos de 50 USD) o pesos cubanos, en el domicilio del receptor. Cotizas, pagas, nos mandas el comprobante y los datos del receptor, y en 24 horas el mensajero cuadra la hora con él y entrega. Te mandamos como prueba una foto del efectivo junto al carnet de identidad.</p>
+                            <p>Entregamos dólares (en múltiplos de 10 USD) o pesos cubanos, en el domicilio del receptor. Cotizas, pagas, nos mandas el comprobante y los datos del receptor, y en 24 horas el mensajero cuadra la hora con él y entrega. Te mandamos como prueba una foto del efectivo junto al carnet de identidad.</p>
                         </div>
                     </details>
                     <details data-cat="efectivo" hidden>
@@ -794,9 +794,11 @@
             USD_PREPAGO: { label: 'USD a tarjeta Prepago o Tropical', cur: 'USD', nota: 'Bandec Prepago o Tropical' },
             USD_CLASICA: { label: 'USD a tarjeta Clásica',          cur: 'USD', nota: 'Tarjeta Clásica' },
             CUP_CASH:    { label: 'CUP en efectivo',                cur: 'CUP', nota: 'A domicilio en Cuba' },
-            USD_CASH:    { label: 'USD en efectivo',                cur: 'USD', nota: 'Billetes de 50, en múltiplos de 50 USD' }
+            USD_CASH:    { label: 'USD en efectivo',                cur: 'USD', nota: 'En múltiplos de 10 USD' }
         };
-        const PASO_USD_EFECTIVO = 50;
+        const PASO_USD_EFECTIVO = 10;
+        // Envíos de USD en efectivo de menos de 100 USD llevan +1 USD (igual que Vanessa en calculos.js).
+        const CARGO_USD_EFECTIVO = { usd: 1, debajoDe: 100 };
 
         // ============================================================
         // UTILIDADES
@@ -841,6 +843,17 @@
         const EPS = 1e-9;
         const abajoN = (x, dec = 0) => Math.floor(x * Math.pow(10, dec) + EPS) / Math.pow(10, dec);
         const arribaN = (x) => Math.ceil(x - EPS);
+        // USD en efectivo: lo que cuesta entregar d USD, con el cargo (+1 USD si es menos de 100).
+        const cargoEf = (d) => (d > 0 && d < CARGO_USD_EFECTIVO.debajoDe ? CARGO_USD_EFECTIVO.usd : 0);
+        const costoEf = (d, tasa) => arribaN((d + cargoEf(d)) * tasa);
+        // El mínimo llega en MXN (50 USD x tasa): se regresa a USD, al múltiplo de arriba, y el mínimo en MXN
+        // es lo que de verdad cuesta ese monto con su cargo. 50 USD sigue siendo el mínimo.
+        function minimoEf(p) {
+            const minUsd = p.min ? Math.floor(p.min / p.normal + 1e-6) : PASO_USD_EFECTIVO;
+            const usd = Math.max(PASO_USD_EFECTIVO, Math.ceil(minUsd / PASO_USD_EFECTIVO - EPS) * PASO_USD_EFECTIVO);
+            return { usd, mxn: costoEf(usd, p.normal) };
+        }
+        const minimoMXN = (p) => (esEfectivoUSD(p) ? minimoEf(p).mxn : p.min);
 
         // El cliente da PESOS -> lo que recibe
         function cotizar(p, mxn) {
@@ -853,20 +866,22 @@
                 return { recibe: abajoN(mxn * tasa), tasa, incentivo, paga: mxn };
             }
             if (esEfectivoUSD(p)) {
-                // USD en efectivo: billetes de 50. Se decide con la tasa de INCENTIVO.
+                // USD en efectivo: múltiplos de 10. Se decide con la tasa de INCENTIVO.
                 const aPaso = (x) => Math.floor(x / PASO_USD_EFECTIVO + EPS) * PASO_USD_EFECTIVO;
                 const conInc = desc ? aPaso(mxn / desc) : 0;
                 let recibe;
                 if (desc && conInc >= p.descuentoDesde) { tasa = desc; incentivo = true; recibe = conInc; }
                 else recibe = aPaso(mxn / p.normal);
-                return { recibe, tasa, incentivo, paga: arribaN(recibe * tasa) };
+                // Con el cargo puede no alcanzar: se baja un múltiplo hasta que alcance.
+                while (recibe > 0 && costoEf(recibe, tasa) > mxn) recibe -= PASO_USD_EFECTIVO;
+                return { recibe, tasa, incentivo, paga: recibe > 0 ? costoEf(recibe, tasa) : 0, cargo: cargoEf(recibe) };
             }
             // USD tarjeta y MLC: se decide con la tasa de INCENTIVO
             if (desc && mxn / desc + EPS >= p.descuentoDesde) { tasa = desc; incentivo = true; }
             return { recibe: abajoN(mxn / tasa, 2), tasa, incentivo, paga: mxn };
         }
 
-        // El cliente dice cuánto quiere RECIBIR -> lo que paga. En USD efectivo, si no es múltiplo de 50,
+        // El cliente dice cuánto quiere RECIBIR -> lo que paga. En USD efectivo, si no es múltiplo de 10,
         // devuelve { opciones } con los dos vecinos.
         function cotizarRecibir(p, quiere) {
             const cur = meta(p).cur;
@@ -884,10 +899,11 @@
             if (esEfectivoUSD(p) && quiere % PASO_USD_EFECTIVO !== 0) {
                 const bajo = Math.floor(quiere / PASO_USD_EFECTIVO) * PASO_USD_EFECTIVO;
                 const alto = bajo + PASO_USD_EFECTIVO;
-                return { opciones: [bajo, alto].filter((u) => u >= PASO_USD_EFECTIVO).map((u) => cotizarRecibir(p, u)) };
+                return { opciones: [bajo, alto].filter((u) => u >= minimoEf(p).usd).map((u) => cotizarRecibir(p, u)) };
             }
             const incentivo = !!desc && quiere >= p.descuentoDesde;
             const tasa = incentivo ? desc : p.normal;
+            if (esEfectivoUSD(p)) return { paga: costoEf(quiere, tasa), recibe: quiere, tasa, incentivo, cargo: cargoEf(quiere) };
             return { paga: arribaN(quiere * tasa), recibe: quiere, tasa, incentivo };
         }
         // <<< REGLA ÚNICA (fin)
@@ -919,7 +935,7 @@
 
             let mxn = leer(mxnIn.value) * (k || 1);       // lo escrito, convertido a pesos para cotizar
             let rev = null;                                // cotización de "cuánto quieren recibir", si es el caso
-            let opciones = null;                           // USD en efectivo: monto que no es múltiplo de 50
+            let opciones = null;                           // USD en efectivo: monto que no es múltiplo de 10
             if (origen === 'recibe') {
                 const quiere = leer(recIn.value);
                 rev = quiere > 0 ? cotizarRecibir(p, quiere) : null;
@@ -935,7 +951,7 @@
 
             // Línea de tasa
             const q = mxn > 0 ? cotizar(p, mxn) : null;
-            if (q && rev) { q.paga = rev.paga; q.recibe = rev.recibe; q.tasa = rev.tasa; q.incentivo = rev.incentivo; }
+            if (q && rev) { q.paga = rev.paga; q.recibe = rev.recibe; q.tasa = rev.tasa; q.incentivo = rev.incentivo; q.cargo = rev.cargo; }
             const tasaMostrada = q ? q.tasa : p.normal;
             $('tasa-texto').textContent = k
                 ? (m.cur === 'CUP'
@@ -947,7 +963,7 @@
 
             if (opciones) {
                 const s = document.createElement('span');
-                s.textContent = 'Se entrega en billetes de 50 USD. Para ' + nf0.format(leer(recIn.value)) + ' USD tienes dos opciones: ' +
+                s.textContent = 'Se entrega en múltiplos de 10 USD. Para ' + nf0.format(leer(recIn.value)) + ' USD: ' +
                     opciones.map((o) => nf0.format(o.recibe) + ' USD por ' + (k ? nf2.format(aUSDT(o.paga, k)) + ' USDT' : dinero(o.paga) + ' MXN')).join(' o ') + '.';
                 info.appendChild(s);
             }
@@ -960,11 +976,13 @@
             if (document.activeElement !== recIn) recIn.value = q.recibe > 0 ? (m.cur === 'CUP' || esEfectivoUSD(p) ? nf0.format(q.recibe) : nf2.format(q.recibe)) : '';
 
             // Mínimo
-            if (p.min != null && mxn < p.min) {
+            const minimo = minimoMXN(p);
+            if (minimo != null && mxn < minimo) {
                 const span = document.createElement('span');
                 span.className = 'alerta';
                 span.textContent = 'El mínimo para ' + m.label + ' es de ' +
-                    (k ? nf2.format(aUSDT(p.min, k)) + ' USDT.' : dinero(Math.ceil(p.min)) + ' MXN.');
+                    (esEfectivoUSD(p) ? minimoEf(p).usd + ' USD (' : '') +
+                    (k ? nf2.format(aUSDT(minimo, k)) + ' USDT' : dinero(Math.ceil(minimo)) + ' MXN') + (esEfectivoUSD(p) ? ').' : '.');
                 info.appendChild(span);
                 return;
             }
@@ -1006,11 +1024,17 @@
                 info.appendChild(s);
             }
 
-            // Billetes de 50
+            // Múltiplos de 10
             if (esEfectivoUSD(p) && Math.abs(q.paga - mxn) > 0.004) {
                 const s = document.createElement('div');
-                s.textContent = 'Se entrega en billetes de 50 USD: ' + nf0.format(q.recibe) + ' USD por ' +
+                s.textContent = 'Se entrega en múltiplos de 10 USD: ' + nf0.format(q.recibe) + ' USD por ' +
                     (k ? nf2.format(usdt) + ' USDT.' : dinero(q.paga) + ' MXN.');
+                info.appendChild(s);
+            }
+            // Cargo de los envíos chicos
+            if (esEfectivoUSD(p) && q.cargo) {
+                const s = document.createElement('div');
+                s.textContent = 'Incluye ' + q.cargo + ' USD de envío (envíos de menos de ' + CARGO_USD_EFECTIVO.debajoDe + ' USD).';
                 info.appendChild(s);
             }
         }
